@@ -1,47 +1,74 @@
 package models;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 public class User {
+   
+   private int id_user,id_role;
+   private String nom,prenom;
+   private String email,password;
+  // private Date created_at;
+   //private Set<UserRole> userRole = new HashSet<UserRole>(0);
+   
+   //Constructors
+   public User() {
+   }
 
-	private String username;
-	private String password;
-	private boolean enabled;
-	private Set<UserRole> userRole = new HashSet<UserRole>(0);
+   public int getId_user() {
+      return id_user;
+   }
 
-	//getter and setter methods
+   public void setId_user(int id_user) {
+      this.id_user = id_user;
+   }
 
-  public String getUsername() {
-    return username;
-  }
+   public int getId_role() {
+      return id_role;
+   }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+   public void setId_role(int id_role) {
+      this.id_role = id_role;
+   }
 
-  public String getPassword() {
-    return password;
-  }
+   public String getNom() {
+      return nom;
+   }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+   public void setNom(String nom) {
+      this.nom = nom;
+   }
 
-  public boolean isEnabled() {
-    return enabled;
-  }
+   public String getPrenom() {
+      return prenom;
+   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
-  }
+   public void setPrenom(String prenom) {
+      this.prenom = prenom;
+   }
 
-  public Set<UserRole> getUserRole() {
-    return userRole;
-  }
+   public String getEmail() {
+      return email;
+   }
 
-  public void setUserRole(Set<UserRole> userRole) {
-    this.userRole = userRole;
-  }
-    
+   public void setEmail(String email) {
+      this.email = email;
+   }
+
+   public String getPassword() {
+      return password;
+   }
+
+   public void setPassword(String password) {
+      this.password = password;
+   }
+
+
+   
+   
+
+   
+   
+   
 }

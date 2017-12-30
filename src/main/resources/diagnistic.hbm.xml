@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+   <class name="models.Diagnostic" table="diagnostics">
+      <id column="id_diagnostic" name="id_diagnostic" type="int">
+         <generator class="native"/>
+      </id>
+      <property name="id_patient" not-null="false" type="string" />    
+      <property name="nombre_seances" not-null="false" type="int" />
+      <property name="description" not-null="false" type="string" />
+   </class>
+</hibernate-mapping>
