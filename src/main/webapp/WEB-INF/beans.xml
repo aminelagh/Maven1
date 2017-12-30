@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd"
+       bean-discovery-mode="annotated">
+  
+  <!-- UserBean --> 
+  <bean id="beanUserServiceHibernate" class="services.UserServiceImpl">
+    <constructor-arg ref="beanUserDaoHibernate"/>
+  </bean>   
+  <bean id="beanUserDaoHibernate" class="dao.UserDaoHibernateImpl" >
+    <constructor-arg ref="beanHibernateUtil"/>
+  </bean>   
+  <!-- beanHibernateUtil For All-->
+  <bean id="beanHibernateUtil" class="util.HibernateUtil" ></bean>
+  
+  
+  <!-- PatientBean --> 
+  <bean id="beanPatientServiceHibernate" class="services.PatientServiceImpl">
+    <constructor-arg ref="beanPatientDaoHibernate"/>
+  </bean>   
+  <bean id="beanPatientDaoHibernate" class="dao.PatientDaoHibernateImpl" >
+    <constructor-arg ref="beanHibernateUtil"/>
+  </bean>   
+
+
+</beans>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="models.Patient" table="patients">
+    <id column="id_patient" name="id_patient" type="int">
+      <generator class="native"/>
+    </id>
+    <property name="id_user" not-null="false" type="int"/>
+    <property name="nom" not-null="false" type="string"/>
+    <property name="prenom" not-null="false" type="string" />
+    <property name="dob" not-null="false" type="string"/>
+    <property name="cin" not-null="false" type="string"/>
+    <property name="adresse" not-null="false" type="string"/>
+    <property name="fumeur" not-null="false" type="boolean"/>
+  </class>
+</hibernate-mapping>
