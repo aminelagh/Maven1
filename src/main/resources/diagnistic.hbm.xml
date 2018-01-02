@@ -5,7 +5,7 @@
       <id column="id_diagnostic" name="id_diagnostic" type="int">
          <generator class="native"/>
       </id>
-      <property name="id_patient" not-null="false" type="string" />    
+      <property name="id_patient" not-null="false" type="int" />    
       <property name="nombre_seances" not-null="false" type="int" />
       <property name="description" not-null="false" type="string" />
    </class>

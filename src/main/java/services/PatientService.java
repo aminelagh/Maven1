@@ -11,5 +11,5 @@ public interface PatientService {
   public Patient get(int id);
   public ArrayList<Patient> get();
   public ArrayList<Patient> getMine(int id_user);
-  
+  public int getNextID2();  
 }

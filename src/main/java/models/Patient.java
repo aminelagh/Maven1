@@ -66,6 +66,19 @@ public class Patient {
       this.dob = dob;
       this.fumeur = fumeur;
    }
+
+   public Patient(int id_patient, int id_user, String nom, String prenom, String dob, String cin, String adresse, boolean fumeur, Date created_at) {
+      this.id_patient = id_patient;
+      this.id_user = id_user;
+      this.nom = nom;
+      this.prenom = prenom;
+      this.dob = dob;
+      this.cin = cin;
+      this.adresse = adresse;
+      this.fumeur = fumeur;
+      this.created_at = created_at;
+   }
+   
    /*
    public Patient(int id_patient, int id_user, String nom, String prenom, String dob, String cin, String adresse, boolean fumeur, Date created_at) {
       this.id_patient = id_patient;
@@ -78,7 +91,15 @@ public class Patient {
       this.fumeur = fumeur;
       this.created_at = created_at;
    }*/
-   
+
+   public Date getCreated_at() {
+      return created_at;
+   }
+
+   public void setCreated_at(Date created_at) {
+      this.created_at = created_at;
+   }
+     
    
    public String getCin() {
       return cin;
@@ -144,18 +165,13 @@ public class Patient {
    public void setFumeur(boolean fumeur) {
       this.fumeur = fumeur;
    }
-   
-   public Date getCreated_at() {
-      return created_at;
-   }
-   
-   public void setCreated_at(Date created_at) {
-      this.created_at = created_at;
-   }
-   
+
    @Override
    public String toString() {
       return "Patient{" + "id_patient=" + id_patient + ", id_user=" + id_user + ", nom=" + nom + ", prenom=" + prenom + ", dob=" + dob + ", cin=" + cin + ", adresse=" + adresse + ", fumeur=" + fumeur + ", created_at=" + created_at + '}';
    }
+
+
    
+
 }

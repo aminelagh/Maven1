@@ -12,6 +12,5 @@
       <property name="cin" not-null="false" type="string"/>
       <property name="adresse" not-null="false" type="string"/>
       <property name="fumeur" not-null="false" type="boolean"/>
-      <property name="created_at" not-null="false" type="date"/>
    </class>
 </hibernate-mapping>

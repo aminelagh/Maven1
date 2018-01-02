@@ -56,7 +56,7 @@
               pageButtonCount: 5,
               inserting: false,
               editing: false,
-              selecting: true,
+              selecting: true,              
               
               //add new items form requirement:
               fields: [
@@ -65,7 +65,6 @@
                 { name: "dob", type: "text", width: 50, title: "Date de naissance" },
                 { name: "CIN", type: "text", width: 30, align: "right" },
                 { name: "Adresse", type: "text", width: 120 },
-                { name: "date", type: "text", width: 120 },
                 { name: "Fumeur", type: "checkbox", title: "Fumeur", sorting: true, width: 20 },
                 { type: "control", modeSwitchButton: true, editButton: false, deleteButton: true, width: 20 }
               ],
@@ -102,7 +101,6 @@
                       "patient": "${patient.nom} ${patient.prenom}",
                       "dob": "${patient.dob}",
                       "CIN": "${patient.cin}",
-                      "date": "${patient.created_at}",
                       "Adresse": "${patient.adresse}",
                       "Fumeur": ${patient.fumeur}
                     },

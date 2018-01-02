@@ -1,10 +1,13 @@
 package models;
 
+import java.util.Date;
+
 
 public class Diagnostic {
    
    private int id_diagnostic, id_patient,nombre_seances;
-   private String description;
+   private String description;   
+   Date created_at;
    
    //Constructors
    public Diagnostic() {}
@@ -20,11 +23,19 @@ public class Diagnostic {
       this.description = description;
    }
    
-   public Diagnostic(int id_diagnostic, int id_patient, int nombre_seances, String description) {
+   public Diagnostic(int id_diagnostic, int id_patient, String description, int nombre_seances) {
       this.id_diagnostic = id_diagnostic;
       this.id_patient = id_patient;
       this.nombre_seances = nombre_seances;
       this.description = description;
+   }
+
+   public Diagnostic(int id_diagnostic, int id_patient,String description,  int nombre_seances, Date created_at) {
+      this.id_diagnostic = id_diagnostic;
+      this.id_patient = id_patient;
+      this.nombre_seances = nombre_seances;
+      this.description = description;
+      this.created_at = created_at;
    }
    
    //Getters & Setters
@@ -59,12 +70,21 @@ public class Diagnostic {
    public void setDescription(String description) {
       this.description = description;
    }
-   
+
+   public Date getCreated_at() {
+      return created_at;
+   }
+
+   public void setCreated_at(Date created_at) {
+      this.created_at = created_at;
+   }
+
    @Override
    public String toString() {
-      return "Diagnostic{" + "id_diagnostic=" + id_diagnostic + ", id_patient=" + id_patient + ", nombre_seances=" + nombre_seances + ", description=" + description + '}';
+      return "Diagnostic{" + "id_diagnostic=" + id_diagnostic + ", id_patient=" + id_patient + ", nombre_seances=" + nombre_seances + ", description=" + description + ", created_at=" + created_at + '}';
    }
    
+
    
    
    

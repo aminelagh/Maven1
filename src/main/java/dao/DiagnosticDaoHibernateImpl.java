@@ -2,36 +2,36 @@ package dao;
 
 import java.util.ArrayList;
 import java.util.List;
+import models.Diagnostic;
 import util.HibernateUtil;
-import models.Patient;
 import org.hibernate.Session;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Transaction;
 
 
-public class PatientDaoHibernateImpl implements PatientDao{
+public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
    
    HibernateUtil hibernateUtil;
-   public PatientDaoHibernateImpl(HibernateUtil hibernateUtil){
+   public DiagnosticDaoHibernateImpl(HibernateUtil hibernateUtil){
       this.hibernateUtil = hibernateUtil;
    }
    
    @Override
-   public void add(Patient patient) {
+   public void add(Diagnostic d) {
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      session.save(patient);
+      session.save(d);
       session.getTransaction().commit();
       session.flush();
       session.clear();
       session.close();}
    
    @Override
-   public void delete(int id_patient) {
+   public void delete(int id) {
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      Patient u = (Patient)session.load(Patient.class, new Integer(id_patient));
+      Diagnostic u = (Diagnostic)session.load(Diagnostic.class, new Integer(id));
       session.delete(u);
       session.getTransaction().commit();
       session.flush();
@@ -40,23 +40,23 @@ public class PatientDaoHibernateImpl implements PatientDao{
    }
    
    @Override
-   public Patient get(int id_patient) {
+   public Diagnostic get(int id) {
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      Query q = session.createQuery("from Patient where id = :id");
-      q.setInteger("id",id_patient);
-      Patient patient = (Patient) q.uniqueResult();
+      Query q = session.createQuery("from Diagnostic where id = :id");
+      q.setInteger("id",id);
+      Diagnostic d = (Diagnostic) q.uniqueResult();
       session.flush();
       session.clear();
       session.close();
-      return patient;
+      return d;
    }
    
    @Override
-   public void update(Patient p) {
+   public void update(Diagnostic d) {
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      session.update(p);
+      session.update(d);
       session.getTransaction().commit();
       session.flush();
       session.clear();
@@ -64,29 +64,29 @@ public class PatientDaoHibernateImpl implements PatientDao{
    }
    
    @Override
-   public ArrayList<Patient> get() {
-      List<Patient> list = new ArrayList<Patient>();
+   public ArrayList<Diagnostic> get() {
+      List<Diagnostic> list = new ArrayList<Diagnostic>();
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      list = session.createQuery("from Patient").list();
+      list = session.createQuery("from Diagnostic").list();
       session.flush();
       session.clear();
       session.close();
-      return (ArrayList<Patient>) list;
+      return (ArrayList<Diagnostic>) list;
    }
    
    @Override
-   public ArrayList<Patient> getMine(int id_user) {
-      List<Patient> list = new ArrayList<Patient>();
+   public ArrayList<Diagnostic> getMine(int id) {
+      List<Diagnostic> list = new ArrayList<Diagnostic>();
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      Query query = session.createQuery("from Patient where id_user =: id_user");
-      query.setInteger("id_user", id_user);
+      Query query = session.createQuery("from Diagnostic where id_patient =: id_patient");
+      query.setInteger("id_patient", id);
       list = query.list();
       session.flush();
       session.clear();
       session.close();
-      return (ArrayList<Patient>) list;
+      return (ArrayList<Diagnostic>) list;
    }
    
    @Override
@@ -102,20 +102,16 @@ public class PatientDaoHibernateImpl implements PatientDao{
    
    @Override
    public int getNextID() {
-      List<Patient> list = new ArrayList<Patient>();
+      List<Diagnostic> list = new ArrayList<Diagnostic>();
       Session session = hibernateUtil.getSF().openSession();
       Transaction tr = session.beginTransaction();
-      Query q = session.createQuery("from Patient");
+      Query q = session.createQuery("from Diagnostic");
       list = q.list();
       session.flush();
       session.clear();
       session.close();
-      int last_id;
-      if(list.isEmpty())
-         last_id=1;
-      else
-         last_id= (list.get((list.size()-1)).getId_patient())+1;
-      return last_id;
+      int last_id = list.get((list.size()-1)).getId_diagnostic();      
+      return (last_id+1);      
    }
    
    
