@@ -1,8 +1,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/fragments/header.jsp" />
-   
-<div class="container">     
-   
+
+<div class="container">   
    
    
    <!-- Forms
@@ -68,27 +67,12 @@
                            <div class="form-group">                              
                               <button type="submit" class="btn btn-primary">Valider</button>  
                            </div>
-                              
-                        </div>                        
-
-                  </div>
-                  
-            </div>
-            </form>
-            <!-- Form end -->
-         </div>
-      </div>
-   </div>
-      
-</div>
-
-
-</div>
-<jsp:include page="/fragments/footer.jsp" />
-
-
+                           
+                        </div>
+                        
+                        
                         <!-- first Diagnostic -->
-                        <div class="col-lg-6">                             
+                        <div class="col-lg-6">
                            
                            <div class="form-group">
                               <label class="custom-control custom-checkbox">
@@ -97,7 +81,7 @@
                                  <span class="custom-control-indicator"></span>
                               </label>
                            </div>                           
-                              
+                           
                            <div class="collapse" id="collapseDiagnosticForm">
                               <div class="card card-block">
                                  <legend>Diagnostic</legend> 
@@ -111,6 +95,22 @@
                                  <input type="number" class="form-control col-3" id="nombre_seances" name="nombre_seances" placeholder="Nombre de Séances" value="${diagnostic.nombre_seances}" />
                               </div>
                            </div>              
-                              
+                           
                         </div>
                      </div>
+                     
+                  </div>
+                  
+            </div>
+            </form>
+            <!-- Form end -->
+         </div>
+      </div>
+   </div>
+   
+</div>
+
+
+</div>
+<jsp:include page="/fragments/footer.jsp" />
+

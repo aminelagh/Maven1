@@ -27,7 +27,7 @@ public class tester {
       //System.exit(0);
       
       
-      JDBCUtil jdbc = new JDBCUtil("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/kineapp_db", "root", "");
+      /*JDBCUtil jdbc = new JDBCUtil("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/kineapp_db", "root", "");
       
       int nextid=1;
       Patient p = null;
@@ -41,7 +41,7 @@ public class tester {
       }catch(Exception e){
          System.out.println("Erreur: "+e.getCause()+" \n "+e.getMessage());
       }
-      System.out.println("next id: "+nextid);
+      System.out.println("next id: "+nextid);*/
       
    }
    

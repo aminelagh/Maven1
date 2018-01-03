@@ -1,25 +1,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
- 
-
+    
    
-   
+   <!-- Diagnostic -->
+   <bean id="beanDiagnosticService" class="services.DiagnosticServiceImpl">
+      <constructor-arg ref="beanDiagnosticDaoJDBC"/>
+   </bean>   
+   <bean id="beanDiagnosticDaoJDBC" class="dao.DiagnosticDaoJDBCImpl" >
+      <constructor-arg ref="beanJDBCUtil"/>
+   </bean>
    
    <!-- Patient -->
-   <bean id="beanPatientServiceImpl" class="services.PatientServiceImpl">
+   <bean id="beanPatientService" class="services.PatientServiceImpl">
       <constructor-arg ref="beanPatientDaoJDBCImpl"/>
    </bean>   
    <bean id="beanPatientDaoJDBCImpl" class="dao.PatientDaoJDBCImpl" >
       <constructor-arg ref="beanJDBCUtil"/>
-   </bean>
-   
-   <!-- Diagnostic -->
-   <bean id="beanDiagnosticServiceImpl" class="services.DiagnosticServiceImpl">
-      <constructor-arg ref="beanDiagnosticDaoJDBCImpl"/>
-   </bean>   
-   <bean id="beanDiagnosticDaoJDBCImpl" class="dao.DiagnosticDaoJDBCImpl" >
-      <constructor-arg ref="beanJDBCUtil2"/>
    </bean>
    
    
@@ -30,14 +27,5 @@
       <constructor-arg index="2" value="root"/>
       <constructor-arg index="3" value=""/>
    </bean>
-
-
-   <bean id="beanJDBCUtil2" class="util.JDBCUtil">
-      <constructor-arg index="0" value="com.mysql.jdbc.Driver"/>
-      <constructor-arg index="1" value="jdbc:mysql://localhost:3306/kineapp_db"/>
-      <constructor-arg index="2" value="root"/>
-      <constructor-arg index="3" value=""/>
-   </bean>
-
 
 </beans>

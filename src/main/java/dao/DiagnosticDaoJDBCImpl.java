@@ -8,7 +8,6 @@ import java.util.List;
 import util.JDBCUtil;
 import models.Diagnostic;
 
-
 public class DiagnosticDaoJDBCImpl implements DiagnosticDao{
    
    JDBCUtil jdbc;

@@ -28,8 +28,7 @@ public class PatientController {
    public PatientController(){
       System.out.println("controllers.ClientController.<init>()");
       try{
-         context = new ClassPathXmlApplicationContext("Beans.xml");
-         patientService = (PatientServiceImpl)context.getBean("beanPatientServiceImpl");
+         
          //diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticServiceImpl");
       }
       catch(Exception e){e.printStackTrace();}
@@ -48,70 +47,79 @@ public class PatientController {
    public ModelAndView addPatient(ModelMap model){
       model.addAttribute("pageTitle", "Création d'un nouveau patient");
       return new ModelAndView("patient/addPatient");
-   }   
+   }
    
    @RequestMapping(value={"/add"}, method = RequestMethod.POST)
    public ModelAndView submitAddPatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request){
-      //Diagnostic diag = new Diagnostic(Integer.parseInt(request.getParameter("nombre_seances")), request.getParameter("description").toString());
-      //Diagnostic diag = new Diagnostic();
-      //if nom is empty
+      
+      try{
+         context = new ClassPathXmlApplicationContext("Beans.xml");
+         patientService = (PatientServiceImpl)context.getBean("beanPatientService");
+         diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
+      }catch(Exception e){
+         System.out.println("********************");
+         System.out.println("Cause: "+e.getCause());
+         System.out.println("Message: "+e.getMessage());
+         model.addAttribute("errorMessage", e.getMessage());
+         return new ModelAndView("patient/addPatient");
+      }
+      
+      Diagnostic diag = new Diagnostic();
       String errorMessage = "";
       boolean hasError = false;
       boolean withDiag = false;
       
-      patientService.add(patient);
-      return new ModelAndView("patient/addPatient");
-      /*
-      //avec Diag
+      //return new ModelAndView("patient/addPatient");
+      
       if(request.getParameter("withDiagnostic")!=null && request.getParameter("withDiagnostic").equals("on")){
-      withDiag = true;
-      if(!request.getParameter("nombre_seances").isEmpty())
-      diag.setNombre_seances(Integer.parseInt(request.getParameter("nombre_seances")));
-      if(!request.getParameter("description").isEmpty())
-      diag.setDescription(request.getParameter("description") );
+         withDiag = true;
+         if(!request.getParameter("nombre_seances").isEmpty())
+            diag.setNombre_seances(Integer.parseInt(request.getParameter("nombre_seances")));
+         if(!request.getParameter("description").isEmpty())
+            diag.setDescription(request.getParameter("description") );
       }
       
       //si nom empty
       if(patient.getNom().isEmpty()){
-      errorMessage = "<li>nom is empty, please fill it.</li>" + errorMessage;
-      hasError = true;
+         errorMessage = errorMessage + "<li>Le champ \"Nom\" est necessaire pour valider la création d'un nouveau patient.</li>";
+         hasError = true;
       }
       //si description empty
       if(withDiag && request.getParameter("description").isEmpty()){
-      hasError = true;
-      errorMessage = "Veuillez saisir la description du diagnostic" + errorMessage;
+         hasError = true;
+         errorMessage = "Veuillez saisir la description du diagnostic" + errorMessage;
       }
       if(hasError){
-      model.addAttribute("diagnostic", diag);
-      model.addAttribute("patient", patient);
-      model.addAttribute("errorMessage", errorMessage);
-      return new ModelAndView("patient/addPatient");
+         model.addAttribute("diagnostic", diag);
+         model.addAttribute("patient", patient);
+         model.addAttribute("errorMessage", errorMessage);
+         return new ModelAndView("patient/addPatient");
       }
       else{
-      model.addAttribute("pageTitle", "Création d'un nouveau patient");
-      model.addAttribute("successMessage", "Creation du patient "+patient.getNom()+" "+patient.getPrenom()+" reussi.");
-      model.addAttribute("patient", null);
-      model.addAttribute("diagnostic", null);
-      int id_patient = patientService.getNextID2();
-      patient.setId_patient(id_patient);
-      patient.setId_user(0);
-      //patient.setCreated_at(null);
-      
-      try{
-      patientService.add(patient);
-      if(withDiag)
-      {
-      diag.setId_patient(id_patient);
-      diagnosticService.add(diag);
+         model.addAttribute("pageTitle", "Création d'un nouveau patient");
+         model.addAttribute("successMessage", "Creation du patient "+patient.getNom()+" "+patient.getPrenom()+" reussi.");
+         model.addAttribute("patient", null);
+         model.addAttribute("diagnostic", null);
+         int id_patient = patientService.getNextID2();
+         patient.setId_patient(id_patient);
+         patient.setId_user(0);
+         //patient.setCreated_at(null);
+         
+         try{
+            patientService.add(patient);
+            if(withDiag)
+            {
+               diag.setId_patient(id_patient);
+               diag.setDescription(request.getParameter("description"));
+               diag.setNombre_seances(Integer.parseInt(request.getParameter("nombre_seances")));
+               diagnosticService.add(diag);
+            }
+         }catch(Exception e){
+            model.addAttribute("errorMessage", "Erreur de création du patient. <br>"+e.getMessage()+" - "+e.getCause());
+         }
       }
-      
-      }catch(Exception e){
-      model.addAttribute("errorMessage", "Erreur de création du patient. <br>"+e.getMessage()+" - "+e.getCause());
-      }
-      }
-      return new ModelAndView("patient/addPatient");*/
-   }
-   
+      return new ModelAndView("patient/addPatient");
+   }   
    
    @RequestMapping(value={"/delete"}, method = RequestMethod.POST)
    public ModelAndView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, ModelMap model){
@@ -123,14 +131,15 @@ public class PatientController {
    @RequestMapping(value={"/list"}, method = RequestMethod.GET)
    public ModelAndView listPatient(ModelMap model){
       try{
-         //context = new ClassPathXmlApplicationContext("Beans.xml");
-         //patientService = (PatientServiceImpl)context.getBean("beanPatientServiceHibernate");
+         context = new ClassPathXmlApplicationContext("Beans.xml");
+         patientService = (PatientServiceImpl)context.getBean("beanPatientService");
+         diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
       }
       catch(Exception e){
          String errorMessage = "";
-         errorMessage ="<li>Erreur de connexion avec la base de données ! veuillez réessayer ultérieurement.</li>"+errorMessage;
-         errorMessage ="<li>Cause: "+e.getCause()+"</li>"+errorMessage;
-         errorMessage ="<li>Message: "+e.getMessage()+"</li>"+errorMessage;
+         errorMessage = errorMessage + "<li>Erreur de connexion avec la base de données ! veuillez réessayer ultérieurement.</li>";
+         errorMessage = errorMessage + "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage = errorMessage + "<li>Message: "+e.getMessage()+"</li>";
          model.addAttribute("errorMessage", errorMessage);
          model.addAttribute("pageTitle", "Erreur - KinéApp");
          return new ModelAndView("errorPages/errorPage");
@@ -139,8 +148,7 @@ public class PatientController {
       model.addAttribute("pageTitle", "Liste des patients");
       model.addAttribute("patients", patientService.get());
       return new ModelAndView("patient/listPatients");
-   }
-   
+   }   
    
    @RequestMapping(value = "/**")
    public String errorPage(ModelMap model){
@@ -148,8 +156,6 @@ public class PatientController {
       model.addAttribute("errorMessage", "URL requested doesn't exist !!");
       return "errorPages/errorPage";
    }
-   
-   
    
    
    

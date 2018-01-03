@@ -78,6 +78,7 @@ public class Patient {
       this.fumeur = fumeur;
       this.created_at = created_at;
    }
+
    
    /*
    public Patient(int id_patient, int id_user, String nom, String prenom, String dob, String cin, String adresse, boolean fumeur, Date created_at) {

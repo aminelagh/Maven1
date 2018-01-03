@@ -8,7 +8,6 @@ import java.util.List;
 import util.JDBCUtil;
 import models.Patient;
 
-
 public class PatientDaoJDBCImpl implements PatientDao{
    
    JDBCUtil jdbc;
@@ -19,9 +18,12 @@ public class PatientDaoJDBCImpl implements PatientDao{
    @Override
    public void add(Patient p) {
       SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String dob = sdf.format(new Date());
+      String created_at = sdf.format(new Date());
       int fumeur = p.isFumeur() ? 1 : 0;
-      String query = "INSERT INTO patients VALUES(NULL,"+p.getId_user()+",'"+p.getNom()+"','"+p.getPrenom()+"','"+p.getCin()+"','"+p.getAdresse()+"','"+p.getDob()+"',"+fumeur+",'"+dob+"');";
+      if(p.getId_patient()==0)
+         p.setId_patient(this.getNextID());
+      
+      String query = "INSERT INTO patients VALUES("+p.getId_patient()+","+p.getId_user()+",'"+p.getNom()+"','"+p.getPrenom()+"','"+p.getCin()+"','"+p.getAdresse()+"','"+p.getDob()+"',"+fumeur+",'"+created_at+"');";
       jdbc.execute(query);
    }
    
@@ -38,10 +40,19 @@ public class PatientDaoJDBCImpl implements PatientDao{
          String query = "SELECT * FROM patients where id_patient = "+id_patient;
          ResultSet rs = jdbc.getSelection(query);
          if(rs.next())
-            p = new Patient(rs.getInt("id_patient"), rs.getInt("id_user"), rs.getString("nom"), rs.getString("prenom")
-                    , rs.getString("cin"), rs.getString("adresse"), rs.getString("dob"), rs.getBoolean("fumeur"), rs.getDate("created_at"));
-         
-         
+         {
+            p=new Patient();
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setId_user(rs.getInt("id_user"));
+            p.setNom(rs.getString("nom"));
+            p.setPrenom(rs.getString("prenom"));
+            p.setAdresse(rs.getString("adresse"));
+            p.setCin(rs.getString("cin"));
+            p.setDob(rs.getString("dob"));
+            p.setFumeur(rs.getBoolean("fumeur"));
+            p.setCreated_at(rs.getDate("created_at"));
+         }
+         // p = new Patient(rs.getInt("id_patient"), rs.getInt("id_user"), rs.getString("nom"), rs.getString("prenom") , rs.getString("cin"), rs.getString("adresse"), rs.getString("dob"), rs.getBoolean("fumeur"), rs.getDate("created_at"));
          
       }catch(Exception e){
          System.out.println("Erreur: "+e.getCause()+" \n "+e.getMessage());
@@ -59,12 +70,21 @@ public class PatientDaoJDBCImpl implements PatientDao{
    @Override
    public ArrayList<Patient> get() {
       ArrayList<Patient> patients = new ArrayList<>();
+      //return patients;
       try{
          String query = "SELECT * FROM patients ;";
          ResultSet rs = jdbc.getSelection(query);
          while(rs.next()){
-            Patient p = new Patient(rs.getInt("id_patient"), rs.getInt("id_user"), rs.getString("nom"), rs.getString("prenom")
-                    , rs.getString("cin"), rs.getString("adresse"), rs.getString("dob"), rs.getBoolean("fumeur"), rs.getDate("created_at"));
+            Patient p = new Patient();//rs.getInt("id_patient"), rs.getInt("id_user"), rs.getString("nom"), rs.getString("prenom"),rs.getString("dob"), rs.getString("cin"), rs.getString("adresse"),  rs.getBoolean("fumeur") );//, rs.getDate("created_at"));
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setId_user(rs.getInt("id_user"));
+            p.setNom(rs.getString("nom"));
+            p.setPrenom(rs.getString("prenom"));
+            p.setAdresse(rs.getString("adresse"));
+            p.setCin(rs.getString("cin"));
+            p.setDob(rs.getString("dob"));
+            p.setFumeur(rs.getBoolean("fumeur"));
+            p.setCreated_at(rs.getDate("created_at"));
             patients.add(p);
          }
          
@@ -76,13 +96,14 @@ public class PatientDaoJDBCImpl implements PatientDao{
    
    @Override
    public ArrayList<Patient> getMine(int id_user) {
-      ArrayList<Patient> patients = new ArrayList<>();
+      ArrayList<Patient> patients = new ArrayList<>();//return patients;
       try{
          String query = "SELECT * FROM patients where id_user = "+id_user;
          ResultSet rs = jdbc.getSelection(query);
          while(rs.next()){
+            //Patient(int id_patient, int id_user, String nom, String prenom, String dob, String cin, String adresse, boolean fumeur, Date created_at)
             Patient p = new Patient(rs.getInt("id_patient"), rs.getInt("id_user"), rs.getString("nom"), rs.getString("prenom")
-                    , rs.getString("cin"), rs.getString("adresse"), rs.getString("dob"), rs.getBoolean("fumeur"), rs.getDate("created_at"));
+                    ,rs.getString("dob"), rs.getString("cin"), rs.getString("adresse"),  rs.getBoolean("fumeur"), rs.getDate("created_at"));
             patients.add(p);
          }
          
@@ -110,6 +131,5 @@ public class PatientDaoJDBCImpl implements PatientDao{
       }
       return nextid;
    }
-   
    
 }
