@@ -28,10 +28,17 @@ public class PatientController {
    public PatientController(){
       System.out.println("controllers.ClientController.<init>()");
       try{
-         
-         //diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticServiceImpl");
+         context = new ClassPathXmlApplicationContext("Beans.xml");
+         patientService = (PatientServiceImpl)context.getBean("beanPatientService");
+         diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
       }
-      catch(Exception e){e.printStackTrace();}
+      catch(Exception e){
+         String errorMessage = "";
+         errorMessage = errorMessage + "<li>Erreur de connexion avec la base de données ! veuillez réessayer ultérieurement.</li>";
+         errorMessage = errorMessage + "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage = errorMessage + "<li>Message: "+e.getMessage()+"</li>";
+         System.out.println(errorMessage);
+      }
    }
    
    public ModelAndView redirectTo(String view){
@@ -119,7 +126,7 @@ public class PatientController {
          }
       }
       return new ModelAndView("patient/addPatient");
-   }   
+   }
    
    @RequestMapping(value={"/delete"}, method = RequestMethod.POST)
    public ModelAndView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, ModelMap model){
@@ -130,25 +137,30 @@ public class PatientController {
    
    @RequestMapping(value={"/list"}, method = RequestMethod.GET)
    public ModelAndView listPatient(ModelMap model){
-      try{
-         context = new ClassPathXmlApplicationContext("Beans.xml");
-         patientService = (PatientServiceImpl)context.getBean("beanPatientService");
-         diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
-      }
-      catch(Exception e){
-         String errorMessage = "";
-         errorMessage = errorMessage + "<li>Erreur de connexion avec la base de données ! veuillez réessayer ultérieurement.</li>";
-         errorMessage = errorMessage + "<li>Cause: "+e.getCause()+"</li>";
-         errorMessage = errorMessage + "<li>Message: "+e.getMessage()+"</li>";
-         model.addAttribute("errorMessage", errorMessage);
-         model.addAttribute("pageTitle", "Erreur - KinéApp");
-         return new ModelAndView("errorPages/errorPage");
-      }
       
       model.addAttribute("pageTitle", "Liste des patients");
       model.addAttribute("patients", patientService.get());
       return new ModelAndView("patient/listPatients");
-   }   
+   }
+   
+   @RequestMapping(value={"/{id_patient}"}, method = RequestMethod.GET)
+   public ModelAndView patient(ModelMap model, @ModelAttribute("id_patient") int id_patient, HttpServletRequest request){
+      Patient p = null;
+      p = patientService.get(id_patient);
+      System.err.println("----> "+request.getPathInfo());
+      System.err.println("----> "+request.getContentType());
+      System.err.println("----> "+request.getLocalName());
+      System.err.println("----> "+request.getMethod());
+      System.err.println("----> "+request.getPathInfo());
+      System.err.println("----> "+request.getProtocol());
+      System.err.println("----> "+request.getLocalPort());      
+      
+      if(p==null){
+         model.addAttribute("pageTitle", "Création d'un nouveau patient");
+         return new ModelAndView("patient/addPatient");
+      }
+      return new ModelAndView("forward:patient/list");
+   }
    
    @RequestMapping(value = "/**")
    public String errorPage(ModelMap model){
