@@ -100,6 +100,28 @@ public class DiagnosticDaoJDBCImpl implements DiagnosticDao{
          System.out.println("Erreur: "+e.getCause()+" \n "+e.getMessage());
       }
       return nextid;
-   }   
+   }
+   
+   public ArrayList<Diagnostic> getDiagnosticsOfPatient(int id_patient){
+      ArrayList<Diagnostic> diags = new ArrayList<>();
+      try{
+         String query = "SELECT * FROM diagnostics WHERE id_patient="+id_patient+" ; ";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Diagnostic d = new Diagnostic();
+            d.setId_diagnostic(rs.getInt("id_diagnostic"));
+            d.setId_patient(rs.getInt("id_patient"));
+            d.setDescription(rs.getString("description"));
+            d.setNombre_seances(rs.getInt("nombre_seances"));
+            d.setCreated_at(rs.getDate("created_at"));
+            //rs.getInt("id_diagnostic"), rs.getInt("id_patient"), rs.getString("description"), rs.getInt("nombre_seances"),rs.getDate("created_at") );
+            diags.add(d);
+         }
+         
+      }catch(Exception e){
+         System.out.println("Erreur: "+e.getCause()+" \n "+e.getMessage());
+      }
+      return diags;
+   }
    
 }

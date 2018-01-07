@@ -43,4 +43,9 @@ public class DiagnosticServiceImpl implements DiagnosticService{
       return diagnosticDao.getMine(id);
    }
    
+   @Override
+   public ArrayList<Diagnostic> getDiagsOfPatient(int id) {
+      return diagnosticDao.getDiagnosticsOfPatient(id);
+   }
+   
 }

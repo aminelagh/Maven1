@@ -11,5 +11,6 @@ public interface DiagnosticService {
   public Diagnostic get(int id);
   public ArrayList<Diagnostic> get();
   public ArrayList<Diagnostic> getMine(int id_patient);
+  public ArrayList<Diagnostic> getDiagsOfPatient(int id);
   
 }

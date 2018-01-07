@@ -1,5 +1,6 @@
 package controllers;
 
+import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
 import models.*;
 import org.springframework.context.ApplicationContext;
@@ -41,10 +42,6 @@ public class PatientController {
       }
    }
    
-   public ModelAndView redirectTo(String view){
-      return new ModelAndView(view);
-   }
-   
    @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
    public ModelAndView test1(ModelMap model){
       return new ModelAndView("patient/index");
@@ -56,20 +53,33 @@ public class PatientController {
       return new ModelAndView("patient/addPatient");
    }
    
+   @RequestMapping(value={"/update"}, method = RequestMethod.POST)
+   public ModelAndView submitUpdatePatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request){
+      ModelAndView mv = new ModelAndView("redirect:"+patient.getId_patient());
+      try{
+         patientService.update(patient);
+      }catch(Exception e){
+         model.clear();
+         mv.addObject("errorMessage", "Erreur de modification des informations du patient.");
+      }
+      //mv.addObject("", patientService)
+      return mv;
+   }
+   
    @RequestMapping(value={"/add"}, method = RequestMethod.POST)
    public ModelAndView submitAddPatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request){
       
-      try{
-         context = new ClassPathXmlApplicationContext("Beans.xml");
-         patientService = (PatientServiceImpl)context.getBean("beanPatientService");
-         diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
+      /*try{
+      context = new ClassPathXmlApplicationContext("Beans.xml");
+      patientService = (PatientServiceImpl)context.getBean("beanPatientService");
+      diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
       }catch(Exception e){
-         System.out.println("********************");
-         System.out.println("Cause: "+e.getCause());
-         System.out.println("Message: "+e.getMessage());
-         model.addAttribute("errorMessage", e.getMessage());
-         return new ModelAndView("patient/addPatient");
-      }
+      System.out.println("********************");
+      System.out.println("Cause: "+e.getCause());
+      System.out.println("Message: "+e.getMessage());
+      model.addAttribute("errorMessage", e.getMessage());
+      return new ModelAndView("patient/addPatient");
+      }*/
       
       Diagnostic diag = new Diagnostic();
       String errorMessage = "";
@@ -147,19 +157,21 @@ public class PatientController {
    public ModelAndView patient(ModelMap model, @ModelAttribute("id_patient") int id_patient, HttpServletRequest request){
       Patient p = null;
       p = patientService.get(id_patient);
-      System.err.println("----> "+request.getPathInfo());
-      System.err.println("----> "+request.getContentType());
-      System.err.println("----> "+request.getLocalName());
-      System.err.println("----> "+request.getMethod());
-      System.err.println("----> "+request.getPathInfo());
-      System.err.println("----> "+request.getProtocol());
-      System.err.println("----> "+request.getLocalPort());      
-      
       if(p==null){
-         model.addAttribute("pageTitle", "Création d'un nouveau patient");
-         return new ModelAndView("patient/addPatient");
+         model.clear();
+         return new ModelAndView("redirect:list");
+         //return new ModelAndView("patient/addPatient");
       }
-      return new ModelAndView("forward:patient/list");
+      else{
+         ArrayList<Diagnostic> diags = new ArrayList<>();
+         diags = diagnosticService.getDiagsOfPatient(id_patient);
+         
+         ModelAndView mv = new ModelAndView();
+         mv.setViewName("patient/patient");
+         mv.addObject("patient", p);
+         mv.addObject("diags", diags);
+         return mv;
+      }
    }
    
    @RequestMapping(value = "/**")
