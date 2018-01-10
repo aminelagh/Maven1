@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.ArrayList;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import models.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import services.PatientService;
 import services.PatientServiceImpl;
 import services.DiagnosticService;
@@ -20,11 +22,9 @@ import services.DiagnosticServiceImpl;
 @RequestMapping(value = "/patient")
 public class PatientController {
    
-   
    ApplicationContext context;// = new ClassPathXmlApplicationContext("Beans.xml");
    PatientService patientService;// = (PatientServiceImpl)context.getBean("beanPatientServiceHibernate");
    DiagnosticService diagnosticService;
-   
    
    public PatientController(){
       System.out.println("controllers.ClientController.<init>()");
@@ -42,44 +42,53 @@ public class PatientController {
       }
    }
    
-   @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
+   @RequestMapping(value={"","/index"}, method = RequestMethod.GET)
    public ModelAndView test1(ModelMap model){
       return new ModelAndView("patient/index");
    }
    
+   
    @RequestMapping(value={"/add"}, method = RequestMethod.GET)
-   public ModelAndView addPatient(ModelMap model){
+   public ModelAndView addPatient(ModelMap model, HttpServletRequest req){
+      ModelAndView mv = new ModelAndView("patient/addPatient");
       model.addAttribute("pageTitle", "Création d'un nouveau patient");
-      return new ModelAndView("patient/addPatient");
+      model.addAttribute("alertInfo", "Création dun nouveau patient");
+      //req.setAttribute("alertInfo", "Création d'un nouveau patient req");
+      //mv.addObject("alertInfo", "Création d'un nouveau patient req");
+      return mv;
    }
    
    @RequestMapping(value={"/update"}, method = RequestMethod.POST)
    public ModelAndView submitUpdatePatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request){
-      ModelAndView mv = new ModelAndView("redirect:"+patient.getId_patient());
+      ModelAndView mv = new ModelAndView();//"redirect:"+patient.getId_patient());
+      mv.clear();
+      model.clear();
+      mv.setViewName("redirect:"+patient.getId_patient());
+      String errorMessage = "";
+      boolean hasError = false;
+      
+      if(patient.getNom().length()==0){
+         hasError = true;
+         errorMessage += "<li>Veuillez saisir le nom du patient.</li>";
+      }
       try{
-         patientService.update(patient);
+         if(!hasError)
+            patientService.update(patient);
       }catch(Exception e){
          model.clear();
-         mv.addObject("errorMessage", "Erreur de modification des informations du patient.");
+         hasError = true;
+         errorMessage += "<li>Erreur de modification des informations du patient.</li>";
+         errorMessage += "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage += "<li>Message: "+e.getMessage()+"</li>";
       }
-      //mv.addObject("", patientService)
+      if(hasError)
+         model.addAttribute("errorMessage", errorMessage);
+      model.addAttribute("errorMessage", "zadad");
       return mv;
    }
    
    @RequestMapping(value={"/add"}, method = RequestMethod.POST)
    public ModelAndView submitAddPatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request){
-      
-      /*try{
-      context = new ClassPathXmlApplicationContext("Beans.xml");
-      patientService = (PatientServiceImpl)context.getBean("beanPatientService");
-      diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticService");
-      }catch(Exception e){
-      System.out.println("********************");
-      System.out.println("Cause: "+e.getCause());
-      System.out.println("Message: "+e.getMessage());
-      model.addAttribute("errorMessage", e.getMessage());
-      return new ModelAndView("patient/addPatient");
-      }*/
       
       Diagnostic diag = new Diagnostic();
       String errorMessage = "";
@@ -98,7 +107,7 @@ public class PatientController {
       
       //si nom empty
       if(patient.getNom().isEmpty()){
-         errorMessage = errorMessage + "<li>Le champ \"Nom\" est necessaire pour valider la création d'un nouveau patient.</li>";
+         errorMessage = errorMessage + "<li>Le champ Nom est necessaire pour valider la création d'un nouveau patient.</li>";
          hasError = true;
       }
       //si description empty
@@ -110,6 +119,7 @@ public class PatientController {
          model.addAttribute("diagnostic", diag);
          model.addAttribute("patient", patient);
          model.addAttribute("errorMessage", errorMessage);
+         model.addAttribute("alertWarning", errorMessage);
          return new ModelAndView("patient/addPatient");
       }
       else{
@@ -132,7 +142,7 @@ public class PatientController {
                diagnosticService.add(diag);
             }
          }catch(Exception e){
-            model.addAttribute("errorMessage", "Erreur de création du patient. <br>"+e.getMessage()+" - "+e.getCause());
+            model.addAttribute("alertDanger", "Erreur de création du patient. <br>"+e.getMessage()+" - "+e.getCause());
          }
       }
       return new ModelAndView("patient/addPatient");
@@ -153,12 +163,11 @@ public class PatientController {
       return new ModelAndView("patient/listPatients");
    }
    
-   @RequestMapping(value={"/{id_patient}"}, method = RequestMethod.GET)
-   public ModelAndView patient(ModelMap model, @ModelAttribute("id_patient") int id_patient, HttpServletRequest request){
+   @RequestMapping(value={"/{id_patient}"}, method = RequestMethod.GET, params={"id_patient"})
+   public ModelAndView patient(@ModelAttribute("id_patient") int id_patient, HttpServletRequest request){
       Patient p = null;
       p = patientService.get(id_patient);
       if(p==null){
-         model.clear();
          return new ModelAndView("redirect:list");
          //return new ModelAndView("patient/addPatient");
       }
@@ -169,21 +178,18 @@ public class PatientController {
          ModelAndView mv = new ModelAndView();
          mv.setViewName("patient/patient");
          mv.addObject("patient", p);
+         mv.addObject("pageTitle",p.getNom()+" "+p.getPrenom());
          mv.addObject("diags", diags);
          return mv;
       }
    }
    
    @RequestMapping(value = "/**")
-   public String errorPage(ModelMap model){
+   public String errorPage1(ModelMap model){
       model.addAttribute("pageTitle", "Erreur - KinéApp");
       model.addAttribute("errorMessage", "URL requested doesn't exist !!");
       return "errorPages/errorPage";
    }
-   
-   
-   
-   
    
    
    /*
@@ -195,5 +201,4 @@ public class PatientController {
    //return new ModelAndView("redirect:list");
    }
    */
-   
 }

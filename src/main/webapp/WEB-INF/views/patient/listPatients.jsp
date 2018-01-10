@@ -1,7 +1,7 @@
    
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <jsp:include page="/fragments/header.jsp" />
-   
+
 <div class="container">     
    
    <div class="bs-docs-section">    
@@ -9,24 +9,27 @@
          <div class="col-lg-12">
             <div class="page-header">
                <h1 id="tables">Mes Patients</h1>
-                  
+               
+               <c:if test="${errorMessage!=null}" >
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">${errorMessage}</div>
+               </c:if>
                <c:if test="${errorMessage!=null}" >
                   <div class="alert alert-warning alert-dismissible fade show" role="alert">${errorMessage}</div>
                </c:if>
                <c:if test="${successMessage!=null}" >
                   <div class="alert alert-success alert-dismissible fade show" role="alert">${successMessage}</div>
                </c:if>
-                  
+               
             </div>
-               
+            
             <div id="jsGridPatients"></div>
-               
+            
             <form id="formDeletingPatient" method="POST" action="<%=request.getContextPath()%>/patient/delete">
                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />            
                <input type="hidden" id="id_patient_for_delete" name="id_patient" />
-                  
-            </form>
                
+            </form>
+            
             <script>      
                $(function() {
                   function deletePatientFunction(id_patient){
@@ -118,13 +121,13 @@
                      
                   });
             </script>
-               
-               
-               
+            
+            
+            
          </div>
       </div>
    </div>
-      
-</div>
    
+</div>
+
 <jsp:include page="/fragments/footer.jsp" />

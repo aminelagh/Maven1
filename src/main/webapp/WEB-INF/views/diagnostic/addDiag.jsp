@@ -10,9 +10,13 @@
       <div class="row">
          <div class="col-lg-12">
             <div class="page-header">
-               
-                 <legend>Création d'un nouveau patient</legend>
-               
+               <h1>Création d'un nouveau diagnostic pour le patient ${patient.nom} ${patient.prenom} </h1>
+               <c:if test="${errorMessage!=null}" >
+                  <div class="alert alert-warning alert-dismissible fade show" role="alert">${errorMessage}</div>
+               </c:if>
+               <c:if test="${successMessage!=null}" >
+                  <div class="alert alert-success alert-dismissible fade show" role="alert">${successMessage}</div>
+               </c:if>
             </div>
          </div>
       </div>
@@ -21,14 +25,12 @@
          
          <div class="card col-lg-12">
             <div class="card-body">
-               <div class="card-header">                  
-                 <legend>Création d'un nouveau patient</legend>
-               </div>
                
                <!-- Form begin -->
                <form method="POST" action="<%=request.getContextPath()%>/patient/add">
                   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-
+                  
+                  <legend>Patient</legend>   
                   
                   <div class="row">                     
                      <div class="col-lg-6">                  
