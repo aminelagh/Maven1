@@ -11,12 +11,12 @@ import org.hibernate.Transaction;
 
 
 public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
-   
+
    HibernateUtil hibernateUtil;
    public DiagnosticDaoHibernateImpl(HibernateUtil hibernateUtil){
       this.hibernateUtil = hibernateUtil;
    }
-   
+
    @Override
    public void add(Diagnostic d) {
       Session session = hibernateUtil.getSF().openSession();
@@ -26,7 +26,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.flush();
       session.clear();
       session.close();}
-   
+
    @Override
    public void delete(int id) {
       Session session = hibernateUtil.getSF().openSession();
@@ -38,7 +38,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.clear();
       session.close();
    }
-   
+
    @Override
    public Diagnostic get(int id) {
       Session session = hibernateUtil.getSF().openSession();
@@ -51,7 +51,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.close();
       return d;
    }
-   
+
    @Override
    public void update(Diagnostic d) {
       Session session = hibernateUtil.getSF().openSession();
@@ -62,7 +62,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.clear();
       session.close();
    }
-   
+
    @Override
    public ArrayList<Diagnostic> get() {
       List<Diagnostic> list = new ArrayList<Diagnostic>();
@@ -74,7 +74,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.close();
       return (ArrayList<Diagnostic>) list;
    }
-   
+
    @Override
    public ArrayList<Diagnostic> getMine(int id) {
       List<Diagnostic> list = new ArrayList<Diagnostic>();
@@ -88,7 +88,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.close();
       return (ArrayList<Diagnostic>) list;
    }
-   
+
    @Override
    public void execute(String query) {
       Session session = hibernateUtil.getSF().openSession();
@@ -99,7 +99,7 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.clear();
       session.close();
    }
-   
+
    @Override
    public int getNextID() {
       List<Diagnostic> list = new ArrayList<Diagnostic>();
@@ -110,9 +110,9 @@ public class DiagnosticDaoHibernateImpl implements DiagnosticDao{
       session.flush();
       session.clear();
       session.close();
-      int last_id = list.get((list.size()-1)).getId_diagnostic();      
-      return (last_id+1);      
+      int last_id = list.get((list.size()-1)).getId_diagnostic();
+      return (last_id+1);
    }
-   
-   
+
+
 }

@@ -6,29 +6,33 @@ import models.*;
 
 public interface Dao {
    
-   public void addDiagnostic(Diagnostic dig);
-   public void addHistorique_medical(Historique_medical hm);
-   public void addImagerie(Imagerie im);
-   public void addPatient(Patient pa);
-   public void addPrescription(Prescription pr);
+   public void addDiagnostic(Diagnostic object);
+   public void addHistorique_medical(Historique_medical object);
+   public void addImagerie(Imagerie object);
+   public void addPatient(Patient object);
+   public void addPrescription(Prescription object);
+   public void addUser(User object);
    
-   public void updateDiagnostic(Diagnostic dig);
-   public void updateHistorique_medical(Historique_medical hm);
-   public void updateImagerie(Imagerie im);
-   public void updatePatient(Patient pa);
-   public void updatePrescription(Prescription pr);
+   public void updateDiagnostic(Diagnostic object);
+   public void updateHistorique_medical(Historique_medical object);
+   public void updateImagerie(Imagerie object);
+   public void updatePatient(Patient object);
+   public void updatePrescription(Prescription object);
+   public void updateUser(User object);
    
-   public void deleteDiagnostic(int dig);
-   public void deleteHistorique_medical(int hm);
-   public void deleteImagerie(int im);
-   public void deletePatient(int pa);
-   public void deletePrescription(int pr);
+   public void deleteDiagnostic(int id);
+   public void deleteHistorique_medical(int id);
+   public void deleteImagerie(int id);
+   public void deletePatient(int id);
+   public void deletePrescription(int id);
+   public void deleteUser(int id);
    
    public Diagnostic getDiagnostic(int id_dig);
    public Historique_medical getHistorique_medical(int id_hm);
    public Imagerie getImagerie(int id_im);
    public Patient getPatient(int id_pa);
    public Prescription getPrescription(int id_pr);
+   public User getUser(int id);
    
    public ArrayList<Diagnostic> getDiagnosticsOfPatient(int id_patient);
    public ArrayList<Historique_medical> getHistorique_medicalOfPatient(int id_patient);

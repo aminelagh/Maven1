@@ -20,6 +20,14 @@
    </bean>
    
    
+   <!-- New things -->
+   <bean id="beanService" class="services.ServiceImpl">
+      <constructor-arg ref="beanDaoJDBCImpl"/>
+   </bean>   
+   <bean id="beanDaoJDBCImpl" class="dao.DaoImpl" >
+      <constructor-arg ref="beanJDBCUtil"/>
+   </bean>   
+   
    <!-- beanJDBCUtil For all -->
    <bean id="beanJDBCUtil" class="util.JDBCUtil">
       <constructor-arg index="0" value="com.mysql.jdbc.Driver"/>
