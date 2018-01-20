@@ -11,7 +11,7 @@
       <link href="<c:url value="/resources/assets/css/custom.min.css" />" rel="stylesheet">   
       
       <!-- for alerts -->
-      <link href="<c:url value="/resources/css/animate.min.css" />" rel="stylesheet">
+      <link href="<c:url value="/resources/alerts/animate.min.css" />" rel="stylesheet">
       
       <!-- datatables -->
       <link href="<c:url value="/resources/datatables/datatables.min.css" />" rel="stylesheet">
