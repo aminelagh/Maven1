@@ -33,7 +33,7 @@ public class WebController {
    
    @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
    public ModelAndView test1(ModelMap model, HttpServletRequest request){
-      System.err.println("path"+request.getContextPath());
+      model.addAttribute("pageTitle", "Kiné-App");
       return new ModelAndView("home");
    }
    

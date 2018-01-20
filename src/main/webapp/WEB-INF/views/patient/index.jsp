@@ -81,8 +81,7 @@
                   </tbody>
                </table>       
                   
-               <script>
-                  
+               <script>                  
                   $(document).ready(function() {
                      
                      $('#example tbody').on('click', 'tr', function () {

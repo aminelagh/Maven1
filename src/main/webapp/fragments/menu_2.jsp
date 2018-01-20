@@ -9,7 +9,7 @@
             <!--img src="dist/img/user2-160x160.jpg" class="img-circle" alt="User Image" /-->
          </div>
          <div class="pull-left info">
-            <p>${$currentUser.nom or 'Nom'} ${$currentUser.prenom or 'Prenom'}</p>
+            <p>${$currentUser.nom} ${$currentUser.prenom}</p>
             <!--a href="#"><i class="fa fa-circle text-success"></i> Online</a-->
          </div>
       </div>
@@ -36,7 +36,7 @@
             </a>
             <ul class="treeview-menu">
                <li><a href="/Maven1/patient/add"><i class="fa fa-circle-o"></i> Nouveau patient</a></li>
-               <li><a href="/Maven1/patient/list"><i class="fa fa-circle-o"></i> List des patients</a></li>
+               <li><a href="<%=request.getContextPath()%>/patient/list"><i class="fa fa-circle-o"></i> Liste des patients</a></li>
             </ul>
          </li>
          
