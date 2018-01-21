@@ -21,7 +21,7 @@ public class DaoImpl implements Dao{
    }
    
    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //Add *********************************************************************** 
+   //Add ***********************************************************************
    @Override
    public void addDiagnostic(Diagnostic dig) {
       SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
@@ -109,7 +109,7 @@ public class DaoImpl implements Dao{
    }
    
    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //Update ********************************************************************   
+   //Update ********************************************************************
    @Override
    public void updateDiagnostic(Diagnostic dig) {
       String query = "UPDATE diagnostic SET id_patient="+dig.getId_patient()+", "
@@ -173,7 +173,7 @@ public class DaoImpl implements Dao{
       jdbc.execute(query);}
    
    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //Delete ********************************************************************   
+   //Delete ********************************************************************
    @Override
    public void deleteDiagnostic(int dig) {
       String query = "DELETE FROM diagnostic WHERE id_diagnostic="+dig+" ;";
@@ -211,7 +211,7 @@ public class DaoImpl implements Dao{
    }
    
    //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //get ***********************************************************************   
+   //get ***********************************************************************
    @Override
    public Diagnostic getDiagnostic(int id_dig) {
       Diagnostic p = null;
@@ -345,6 +345,26 @@ public class DaoImpl implements Dao{
       ArrayList<Diagnostic> items = new ArrayList<Diagnostic>();
       try{
          String query = "SELECT * FROM diagnostic WHERE id_patient="+id+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Diagnostic p = new Diagnostic();
+            p.setId_diagnostic(rs.getInt("id_diagnostic"));
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setDescription(rs.getString("description"));
+            p.setNombre_seances(rs.getInt("nombre_seances"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getDiagnosticsOfPatient(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   
+   public ArrayList<Diagnostic> getDiagnosticsOfPatientTopX(int id, int x) {
+      ArrayList<Diagnostic> items = new ArrayList<Diagnostic>();
+      try{
+         String query = "SELECT * FROM diagnostic WHERE id_patient="+id+" LIMIT "+x+" ;";
          ResultSet rs = jdbc.getSelection(query);
          while(rs.next()){
             Diagnostic p = new Diagnostic();

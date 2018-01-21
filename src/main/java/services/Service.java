@@ -39,6 +39,7 @@ public interface Service {
    
    
    public ArrayList<Diagnostic> getDiagnostics(int id_patient);
+   public ArrayList<Diagnostic> getDiagnosticsTopX(int id_patient, int x);
    public ArrayList<Historique_medical> getHistorique_medicals(int id_patient);
    public ArrayList<Imagerie> getImageries(int id);
    public ArrayList<Patient> getPatients(int id_user);

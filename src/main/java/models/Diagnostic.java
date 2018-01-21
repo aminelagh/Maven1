@@ -17,10 +17,20 @@ public class Diagnostic {
       this.description = description;
    }
    
+   public Diagnostic(int id_patient) {
+      this.id_patient = id_patient;
+   }  
+
+   
    public Diagnostic( int id_patient, int nombre_seances, String description) {
       this.id_patient = id_patient;
       this.nombre_seances = nombre_seances;
       this.description = description;
+   }
+   
+   public Diagnostic( int id_patient, int nombre_seances) {
+      this.id_patient = id_patient;
+      this.nombre_seances = nombre_seances;
    }
    
    public Diagnostic(int id_diagnostic, int id_patient, String description, int nombre_seances) {
