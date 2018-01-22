@@ -20,8 +20,7 @@
          <div class="col-md-4">
             
             <!-- Patient info/update -->
-            <div class="box">
-               
+            <div class="box">               
                <div class="box-header with-border">
                   <h3 class="box-title">Patient</h3>
                   <div class="box-tools pull-right">
@@ -36,7 +35,7 @@
                         <form method="POST" action="<%=request.getContextPath()%>/patient/update">
                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                            <input type="hidden" name="id_patient" value="${patient.id_patient}" />                     
-                           
+                              
                            <div class="form-group">
                               <label>Nom</label>
                               <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom" value="${patient.nom}" />
@@ -67,7 +66,7 @@
                               </label>
                            </div> 
                            <div class="form-group">                              
-                              <button type="submit" class="btn btn-primary">Valider</button>  
+                              <button type="submit" class="btn btn-primary">Modifier</button>  
                            </div>
                         </form>
                      </div>
@@ -81,7 +80,7 @@
             <!-- Diagnostics  -->
             <div class="box">
                <div class="box-header with-border">
-                  <h3 class="box-title">Diagnostics <span class="badge badge-info badge-pill"> ${diagsNumber}</span></h3>
+                  <h3 class="box-title">Diagnostics <span class="badge badge-info badge-pill"> ${diags.size()}</span></h3>
                   <div class="box-tools pull-right">
                      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                      <div class="btn-group">
@@ -128,33 +127,65 @@
                   </div>
                </div>
             </div><!-- /.box -->
-            
+               
          </div><!-- /.col -->
-         
-         
-         
+            
+            
+            
          <div class="col-md-4">
+            <!-- Historique Medical  -->
             <div class="box">
                <div class="box-header with-border">
-                  <h3 class="box-title">Patient</h3>
+                  <h3 class="box-title">Historique médical <span class="badge badge-info badge-pill"> ${HMs.size()}</span></h3>
                   <div class="box-tools pull-right">
                      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                     <div class="btn-group">
+                        <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
+                        <ul class="dropdown-menu" role="menu">
+                           <!--a href="<%=request.getContextPath()%>/patient/${patient.id_patient}/addDiag">
+                              <i class="fa fa-fw fa-plus"></i> Créer un diagnostic
+                           </a-->
+                           <li><a data-toggle="modal" data-target="#modelAddHM"><i class="fa fa-fw fa-plus"></i> Ajouter</a></li>
+                           <li><a href=""><i class="fa fa-fw fa-bars"></i> Historique médical</a></li>
+                           <li class="divider"></li>
+                           <li><a href="#">Imprimer la liste</a></li>
+                        </ul>
+                     </div>
                      <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                   </div>
-               </div><!-- /.box-header -->
+               </div>
                <div class="box-body">
                   <div class="row">
                      <div class="col-md-12">
-                        
+                        <ul class="list-group">                     
+                           <c:if test="${HMs.size() == 0}">
+                              <li class="list-group-item d-flex justify-content-between align-items-center">
+                                 <i>Aucun Historique médical</i>
+                              </li> 
+                           </c:if>
+                           <c:if test="${HMs.size() != 0}">
+                              <c:forEach items="${HMs}" var="item">
+                                 <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    ${item.description}
+                                    <span class="badge">${item.date}</span>
+                                 </li>  
+                              </c:forEach>
+                           </c:if>
+                        </ul>
                      </div>
                   </div><!-- /.row -->
                </div><!-- ./box-body -->
-               <div class="box-footer">                     
+               <div class="box-footer">
+                  <div class="row">
+                     <div class="col-md-4"></div>
+                     <div class="col-md-4"></div>
+                     <div class="col-md-4"></div>
+                  </div>
                </div>
             </div><!-- /.box -->
          </div><!-- /.col -->
-         
-         
+            
+            
       </div><!-- /.row -->
          
          
@@ -163,7 +194,7 @@
    
    
    
-<!--  Model Test  -->
+<!--  Model Add Diagnostic  -->
 <div class="modal fade" id="modelAddDiag" role="dialog">
    <div class="modal-dialog">
       <!-- Form begin -->
@@ -190,8 +221,6 @@
                         <input type="number" class="form-control" name="nombre_seances" value="${diagnostic.nombre_seances}" required="true"/>
                      </div>
                   </div>
-                     
-                     
                </div>
             </div>
             <div class="modal-footer">
@@ -206,5 +235,47 @@
       </form>
    </div>
 </div>
-
+   
+<!--  Model Add Historique Medical  -->
+<div class="modal fade" id="modelAddHM" role="dialog">
+   <div class="modal-dialog">
+      <!-- Form begin -->
+      <form method="POST" action="<%=request.getContextPath()%>/patient/addHM" name="formHM">
+         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+         <input type="hidden" name="form" value="patienDashboard" />
+         <input type="hidden" name="id_patient" value="${patient.id_patient}" />
+            
+         <!-- Modal content-->
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <h4 class="modal-title">Création d'un diagnostic</h4>
+            </div>
+            <div class="modal-body">
+               <div class="row">
+                  <div class="col-md-12">
+                     <div class="form-group">
+                        <label>Description</label>
+                        <textarea required="true" class="form-control" name="description" placeholder="Description" rows="2">${diagnostic.description}</textarea>
+                     </div>
+                     <div class="form-group col-md-4">
+                        <label>Date</label>
+                        <input type="date" class="form-control" name="date" value="${diagnostic.date}" required="true"/>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            <div class="modal-footer">
+               <div class="col-md-2">
+                  <div class="form-group">               
+                     <button type="submit" class="btn btn-primary">Ajouter</button>  
+                  </div>  
+               </div>
+               <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+            </div>
+         </div>
+      </form>
+   </div>
+</div>
+   
 <jsp:include page="/fragments/foot.jsp" />

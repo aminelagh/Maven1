@@ -161,6 +161,11 @@ public class ServiceImpl implements Service{
    }
    
    @Override
+   public ArrayList<Historique_medical> getHistorique_medicalsTopX(int id_patient, int x) {
+      return dao.getHistorique_medicalOfPatientTopX(id_patient,x);
+   }
+   
+   @Override
    public ArrayList<Imagerie> getImageries(int id) {
       return dao.getImageriesOfPrescription(id);
    }

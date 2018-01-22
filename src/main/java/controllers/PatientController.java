@@ -172,37 +172,21 @@ public class PatientController {
       else{
          ArrayList<Diagnostic> diags = new ArrayList<>();
          diags = service.getDiagnostics(id_patient);
+         ArrayList<Historique_medical> HMs = new ArrayList<>();
+         HMs = service.getHistorique_medicals(id_patient);
          
          ModelAndView mv = new ModelAndView();
          mv.setViewName("patient/patient");
          mv.addObject("patient", p);
          mv.addObject("pageTitle",p.getNom()+" "+p.getPrenom());
          mv.addObject("diags", service.getDiagnosticsTopX(id_patient,5));
-         mv.addObject("diagsNumber", diags.size());
+         //mv.addObject("diagsNumber", diags.size());
+         mv.addObject("HMs", service.getHistorique_medicalsTopX(id_patient,10));
+         mv.addObject("HMsNumber", HMs.size());
          return mv;
       }
    }
    
-   @RequestMapping(value={"/patient/{id_patient}/addDiag"}, method = RequestMethod.GET)
-   public ModelAndView addDiag(@ModelAttribute("id_patient") int id_patient, HttpServletRequest request){
-      Patient p = null;
-      p = service.getPatient(id_patient);
-      if(p==null){
-         return new ModelAndView("redirect:list");
-         //return new ModelAndView("patient/addPatient");
-      }
-      else{
-         ArrayList<Diagnostic> diags = new ArrayList<>();
-         diags = service.getDiagnostics(id_patient);
-         
-         ModelAndView mv = new ModelAndView();
-         mv.setViewName("patient/patient");
-         mv.addObject("patient", p);
-         mv.addObject("pageTitle",p.getNom()+" "+p.getPrenom());
-         mv.addObject("diags", diags);
-         return mv;
-      }
-   }
    
    
    @RequestMapping(value = "/patient/**")

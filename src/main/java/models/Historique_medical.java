@@ -11,6 +11,17 @@ public class Historique_medical {
    
    //Constructor:
    public Historique_medical() {}
+
+   public Historique_medical(String description, Date date) {
+      this.description = description;
+      this.date = date;
+   }   
+   
+   public Historique_medical(int id_patient, String description, Date date) {
+      this.id_patient = id_patient;
+      this.description = description;
+      this.date = date;
+   }
    
    //Getters & Setters:
    public int getId_hm() {

@@ -402,6 +402,26 @@ public class DaoImpl implements Dao{
       return items;
    }
    
+   public ArrayList<Historique_medical> getHistorique_medicalOfPatientTopX(int id, int x) {
+      ArrayList<Historique_medical> items = new ArrayList<Historique_medical>();
+      try{
+         String query = "SELECT * FROM historique_medical WHERE id_patient="+id+" LIMIT "+x+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Historique_medical p = new Historique_medical();
+            p.setId_hm(rs.getInt("id_hm"));
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setDescription(rs.getString("description"));
+            p.setDate(rs.getDate("date"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getHistorique_medicalOfPatient(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   
    @Override
    public ArrayList<Imagerie> getImageriesOfPrescription(int id_prescription) {
       ArrayList<Imagerie> items = new ArrayList<Imagerie>();
