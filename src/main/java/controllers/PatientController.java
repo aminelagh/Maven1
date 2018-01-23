@@ -41,10 +41,10 @@ public class PatientController {
       }
    }
    
-   @RequestMapping(value={"/patient","/patient/index"}, method = RequestMethod.GET)
-   public ModelAndView test1(ModelMap model){return new ModelAndView("patient/index");}
+   /*@RequestMapping(value={"/patient","/patient/index"}, method = RequestMethod.GET)
+   public ModelAndView test1(ModelMap model){return new ModelAndView("patient/index");}*/
    
-   @RequestMapping(value={"/patient/update"}, method = RequestMethod.POST)
+   @RequestMapping(value={"/updatePatient"}, method = RequestMethod.POST)
    public ModelAndView submitUpdatePatient(@ModelAttribute Patient patient, RedirectAttributes params){
       
       ModelAndView mv = new ModelAndView("redirect:/patient/"+patient.getId_patient()); //"redirect:"+patient.getId_patient());
@@ -72,7 +72,7 @@ public class PatientController {
       return mv; //this.patient(patient.getId_patient(), request);
    }
    
-   @RequestMapping(value={"/patient/add"}, method = RequestMethod.GET)
+   @RequestMapping(value={"/addPatient"}, method = RequestMethod.GET)
    public ModelAndView addPatient(ModelMap model, HttpServletRequest req){
       ModelAndView mv = new ModelAndView("patient/addPatient");
       model.addAttribute("pageTitle", "Création d'un nouveau patient");
@@ -82,7 +82,7 @@ public class PatientController {
       return mv;
    }
    
-   @RequestMapping(value={"/patient/add"}, method = RequestMethod.POST)
+   @RequestMapping(value={"/addPatient"}, method = RequestMethod.POST)
    public ModelAndView submitAddPatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request,RedirectAttributes params){
       
       Diagnostic diag = new Diagnostic();
@@ -141,15 +141,21 @@ public class PatientController {
       return new ModelAndView("patient/addPatient");
    }
    
-   @RequestMapping(value={"/patient/delete"}, method = RequestMethod.POST)
-   public ModelAndView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, ModelMap model){
-      service.deletePatient(id_patient);
-      model.clear();
-      return new ModelAndView("redirect:list");
+   @RequestMapping(value={"/deletePatient"}, method = RequestMethod.POST)
+   public ModelAndView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, RedirectAttributes params){
+      try{
+         service.deletePatient(id_patient);
+         //delete dossier patient
+         params.addFlashAttribute("alertSuccess", "Patient effacé.");
+      }catch(Exception e){
+         String errorMessage = "Erreur de suppression du dossier du patient. <li>Cause: "+e.getCause()+"</li><li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+      }
+      return new ModelAndView("redirect:patients");
    }
    
    //Liste des patients ********************************************************
-   @RequestMapping(value={"/patient/list"}, method = RequestMethod.GET)
+   @RequestMapping(value={"/patients"}, method = RequestMethod.GET)
    public ModelAndView listPatient(ModelMap model){
       
       model.addAttribute("pageTitle", "Liste des patients");
@@ -182,7 +188,7 @@ public class PatientController {
          mv.addObject("diags", service.getDiagnosticsTopX(id_patient,5));
          //mv.addObject("diagsNumber", diags.size());
          mv.addObject("HMs", service.getHistorique_medicalsTopX(id_patient,10));
-         mv.addObject("HMsNumber", HMs.size());
+         mv.addObject("prescriptions", service.getPrescriptions(id_patient) );
          return mv;
       }
    }

@@ -36,15 +36,13 @@ public class HMController {
       }
    }
    
-   @RequestMapping(value="/patient/addHM", method = RequestMethod.POST)
+   @RequestMapping(value="/addHM", method = RequestMethod.POST)
    public ModelAndView submitAddDiagnosticPatientDashboard( RedirectAttributes params, HttpServletRequest req){
       System.out.println("================== submitAddHM ==================");
       //System.out.println("form : "+req.getParameter("form"));
       SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
       String created_at = sdf.format(new Date());
            
-     
-      
       Historique_medical hm = new Historique_medical();
       hm.setId_patient(Integer.parseInt(req.getParameter("id_patient")));
       hm.setDescription(req.getParameter("description"));

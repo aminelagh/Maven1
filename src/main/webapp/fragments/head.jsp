@@ -4,7 +4,7 @@
       <meta charset="UTF-8">
       <title>${empty pageTitle ? 'kiné-App' : pageTitle}</title>
       <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-         
+      
       <!-- Bootstrap 3.3.2 -->
       <link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet" >         
       <!-- Font Awesome Icons -->
@@ -20,6 +20,7 @@
       <!-- dataTables -->
       <script src="<c:url value="/resources/dataTables/datatables.min.js" />"></script>  
       <!-- Style for Table -->
+      
       <style>
          td.highlight {
             font-weight: bold;
@@ -38,4 +39,4 @@
          
          <!-- Menu_2 -->
          <jsp:include page="menu_2.jsp" />
-            
+         

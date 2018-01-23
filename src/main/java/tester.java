@@ -1,4 +1,5 @@
 
+import java.util.regex.Pattern;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -9,36 +10,32 @@ public class tester {
    public static void main(String[] args) {
       
       
-      ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
-      Service service = (ServiceImpl)context.getBean("beanService");
+      //ApplicationContext context = new ClassPathXmlApplicationContext("Beans.xml");
+      //Service service = (ServiceImpl)context.getBean("beanService");
       
       
-      //diagnosticService = (DiagnosticServiceImpl)context.getBean("beanDiagnosticServiceHibernate");
-      
-      //      System.out.println("********: "+patientService.getNextID2());
-      
-      //System.exit(0);
-      
-      
-      /*JDBCUtil jdbc = new JDBCUtil("com.mysql.jdbc.Driver", "jdbc:mysql://localhost:3306/kineapp_db", "root", "");
-      
-      int nextid=1;
-      Patient p = null;
-      try{
-      String query = "SELECT id_patient FROM patients order by id_patient desc limit 1";
-      ResultSet rs = jdbc.getSelection(query);
-      if(rs.next())
-      nextid = rs.getInt(1)+1;
-      
-      
-      }catch(Exception e){
-      System.out.println("Erreur: "+e.getCause()+" \n "+e.getMessage());
+      String Str = new String("a.b.cd.e.fgh..i.th.amming.jpg");
+      String extension = "";
+      for (String retval: Str.split(Pattern.quote("."))) {
+         //System.out.println(retval);
+         extension = retval;
       }
-      System.out.println("next id: "+nextid);*/
+      System.out.println(" extension : "+extension);
+      
+      
+      String txt = "programming.jpg";// file.getOriginalFilename();
+      String[] parts = txt.split(".");
+      System.out.println(" **** ");
+      for (String part : parts) {
+         System.out.println(" **** ");
+         System.out.println(part);
+      }
+      //System.out.println("=======> "+parts[0]);
+      //System.out.println("=======> "+parts[1]);
       
    }
    
-
+   
    
    
 }

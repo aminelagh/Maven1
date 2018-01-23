@@ -79,14 +79,9 @@ public class DiagnosticController {
       return mv;
    }
    */
-   @RequestMapping(value="/patient/addDiag", method = RequestMethod.POST, params = {"form=patienDashboard"})
+   @RequestMapping(value="/addDiag", method = RequestMethod.POST, params = {"form=patienDashboard"})
    public ModelAndView submitAddDiagnosticPatientDashboard(@ModelAttribute Diagnostic diag, RedirectAttributes params, HttpServletRequest req){
       System.out.println("================== submitAddDiagnostic ==================");
-      System.out.println("form : "+req.getParameter("form"));
-      System.out.println("diag : "+diag.toString() );
-      System.out.println("id_patient : "+diag.getId_patient());
-      System.out.println("description : "+diag.getDescription());
-      System.out.println("nombre_seances : "+diag.getNombre_seances());
       
       ModelAndView mv = new ModelAndView("redirect:/patient/"+diag.getId_patient());
       String errorMessage = "";

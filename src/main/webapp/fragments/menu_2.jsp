@@ -35,8 +35,8 @@
                <i class="fa fa-dashboard"></i> <span>Patient</span> <i class="fa fa-angle-left pull-right"></i>
             </a>
             <ul class="treeview-menu">
-               <li><a href="/Maven1/patient/add"><i class="fa fa-circle-o"></i> Nouveau patient</a></li>
-               <li><a href="<%=request.getContextPath()%>/patient/list"><i class="fa fa-circle-o"></i> Liste des patients</a></li>
+               <li><a href="/Maven1/addPatient"><i class="fa fa-circle-o"></i> Nouveau patient</a></li>
+               <li><a href="<%=request.getContextPath()%>/patients"><i class="fa fa-circle-o"></i> Liste des patients</a></li>
             </ul>
          </li>
          

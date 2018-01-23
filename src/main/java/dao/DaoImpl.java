@@ -521,8 +521,8 @@ public class DaoImpl implements Dao{
          case "patient":
             query = "SELECT id_patient FROM patient order by id_patient desc limit 1";
             break;
-         case "description":
-            query = "SELECT id_description FROM description order by id_description desc limit 1";
+         case "prescription":
+            query = "SELECT id_prescription FROM prescription order by id_prescription desc limit 1";
             break;
          case "user":
             query = "SELECT id_user FROM user order by id_user desc limit 1";
