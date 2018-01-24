@@ -32,6 +32,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.output.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -56,56 +57,6 @@ public class PrescriptionController {
       }
    }
    
-   /*@RequestMapping(value="/addPrescription", method = RequestMethod.POST)
-   public ModelAndView submitaddPrescriptionPatientDashboard(RedirectAttributes params, HttpServletRequest req){
-      System.out.println("================== submit addPrescription ==================");
-      //System.out.println("form : "+req.getParameter("form"));
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
-      String created_at = sdf.format(new Date());
-      
-      Prescription object = new Prescription();
-      object.setId_patient(Integer.parseInt(req.getParameter("id_patient")));
-      object.setDescription(req.getParameter("description"));
-      try{
-         Date date = new Date();
-         date = sdf.parse(req.getParameter("date"));
-         object.setDate(date);
-      } catch (Exception e) {
-         System.out.println("================== Exception addPrescription ==================\n "+e.getMessage());
-      }
-      
-      /*System.out.println("hm : "+hm.toString() );
-      System.out.println("id_patient : "+hm.getId_patient());
-      System.out.println("description : "+hm.getDescription());
-      System.out.println("date : "+hm.getDate());
-      System.out.println("date : "+req.getParameter("date"));
-      System.out.println("form : "+req.getParameter("form") );*
-      
-      ModelAndView mv = new ModelAndView("redirect:/patient/"+object.getId_patient());
-      String errorMessage = "";
-      boolean hasError = false;
-      
-      try{
-         int id_pr = service.getNextID("prescription");
-         object.setId_prescription(id_pr);
-         service.addPrescription(object);
-      }catch(Exception e){
-         hasError = true;
-         errorMessage +=
-                 "<li>Erreur de création du diagnostic.</li>"+
-                 "<li>Cause: "+e.getCause()+
-                 "</li>"+"<li>Message: "+e.getMessage()+"</li>";
-      }
-      if(hasError){
-         params.addFlashAttribute("alertWarning", errorMessage);
-         //mv.addObject("diag", diag);
-      }
-      else
-         params.addFlashAttribute("alertSuccess", "Création de la préscription réussi.");
-      return mv;
-   }
-   */
-   
    @RequestMapping(value="/addPrescription", method = RequestMethod.POST)
    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes params,HttpServletRequest req){
       SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
@@ -127,7 +78,7 @@ public class PrescriptionController {
          params.addFlashAttribute("alertDanger", "Erreur de création de la préscription."+"<li>"+e.getMessage()+"</li>");
       }
       
-      //Si au
+      //Si file exist
       if(!file.isEmpty()){
          String uploading_path = "C://Users/amine/Desktop/uploads/";
          FileItemFactory factory = new DiskFileItemFactory();
@@ -160,9 +111,24 @@ public class PrescriptionController {
          } catch (Exception ex) {
             System.out.println("Error uploading file: "+ex.getMessage() );
          }
-      }      
+      }
       params.addFlashAttribute("alertSuccess","Création de la préscription réussi.");
       return "redirect:/patient/"+req.getParameter("id_patient");
    }
+   
+   @RequestMapping(value={"/deletePrescription"}, method = RequestMethod.POST)
+   public ModelAndView deletePatient(@ModelAttribute("id_patient") int id_patient,
+           @ModelAttribute("id_prescription") int id_prescription, RedirectAttributes params){
+      try{
+         service.deletePrescription(id_prescription);
+         //delete imageries
+         params.addFlashAttribute("alertSuccess", "Prescription effacée.");
+      }catch(Exception e){
+         String errorMessage = "Erreur de suppression du dossier du patient. <li>Cause: "+e.getCause()+"</li><li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+      }
+      return new ModelAndView("redirect:patient/"+id_patient);
+   }
+   
    
 }

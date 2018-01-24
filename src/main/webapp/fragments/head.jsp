@@ -9,6 +9,10 @@
       <link href="<c:url value="/resources/bootstrap/css/bootstrap.min.css" />" rel="stylesheet" >         
       <!-- Font Awesome Icons -->
       <link href="<c:url value="/resources/font-awesome/css/font-awesome.min.css" />" rel="stylesheet" >  
+      
+      <!-- iCheck for checkboxes and radio inputs -->
+      <link href="<c:url value="/resources/plugins/iCheck/all.css" />" rel="stylesheet" > 
+      
       <!-- Ionicons --
       <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
       <!-- Theme style -->

@@ -40,10 +40,10 @@
             </ul>
          </li>
          
+         <li><a href="<%=request.getContextPath()%>/patients"><i class="fa fa-book"></i> Mes patients</a></li>
+         
+         
          <li><a href=""><i class="fa fa-book"></i> Documentation</a></li>
-         
-         
-         <li><a href="documentation/index.html"><i class="fa fa-book"></i> Documentation</a></li>
          <li class="header">Alerts</li>
          <li><a href="#"><i class="fa fa-circle-o text-danger"></i> Important</a></li>
          <li><a href="#"><i class="fa fa-circle-o text-warning"></i> Warning</a></li>

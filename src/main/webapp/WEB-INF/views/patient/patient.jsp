@@ -12,7 +12,7 @@
          <li class="active">${patient.nom} ${patient.prenom}</li>
       </ol>
    </section>
-      
+   
    <!-- Main content -->
    <section class="content">
       
@@ -35,7 +35,7 @@
                         <form method="POST" action="<%=request.getContextPath()%>/patient/update">
                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                            <input type="hidden" name="id_patient" value="${patient.id_patient}" />                     
-                              
+                           
                            <div class="form-group">
                               <label>Nom</label>
                               <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom" value="${patient.nom}" />
@@ -74,21 +74,18 @@
                </div><!-- ./box-body -->
                <div class="box-footer">                     
                </div>
-                  
-            </div><!-- /.box -->
                
+            </div><!-- /.box -->
+            
             <!-- Diagnostics  -->
             <div class="box">
                <div class="box-header with-border">
-                  <h3 class="box-title">Diagnostics <span class="badge badge-info badge-pill"> ${diags.size()}</span></h3>
+                  <h3 class="box-title">Diagnostics <span class="badge badge-info badge-pill"> ${diagnostics.size()}</span></h3>
                   <div class="box-tools pull-right">
                      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                      <div class="btn-group">
                         <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
-                        <ul class="dropdown-menu" role="menu">
-                           <!--a href="<%=request.getContextPath()%>/patient/${patient.id_patient}/addDiag">
-                              <i class="fa fa-fw fa-plus"></i> Créer un diagnostic
-                           </a-->
+                        <ul class="dropdown-menu" role="menu">                           
                            <li><a data-toggle="modal" data-target="#modelAddDiag"><i class="fa fa-fw fa-plus"></i> Créer un diagnostic</a></li>
                            <li><a href=""><i class="fa fa-fw fa-bars"></i> Liste des diagnostics</a></li>
                            <li class="divider"></li>
@@ -102,13 +99,16 @@
                   <div class="row">
                      <div class="col-md-12">
                         <ul class="list-group">                     
-                           <c:if test="${diags.size() == 0}">
+                           <c:if test="${diagnostics.size() == 0}">
                               <li class="list-group-item d-flex justify-content-between align-items-center">
                                  <i>Aucun Diagnostic</i>
                               </li> 
                            </c:if>
-                           <c:if test="${diags.size() != 0}">
-                              <c:forEach items="${diags}" var="diag">
+                           <c:if test="${diagnostics.size() != 0}">
+                              <c:if test="${diagnostics.size() > 5}"> 
+                                 <c:set var="diagnostics" value="${diagnostics.subList(0,5)}" />
+                              </c:if>
+                              <c:forEach items="${diagnostics}" var="diag">
                                  <li class="list-group-item d-flex justify-content-between align-items-center">
                                     ${diag.description}
                                     <span class="badge badge-info badge-pill">${diag.nombre_seances} seance(s)</span>
@@ -127,11 +127,11 @@
                   </div>
                </div>
             </div><!-- /.box -->
-               
+            
          </div><!-- /.col -->
-            
-            
-            
+         
+         
+         
          <div class="col-md-4">
             <!-- Historique Medical  -->
             <div class="box">
@@ -141,10 +141,7 @@
                      <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                      <div class="btn-group">
                         <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
-                        <ul class="dropdown-menu" role="menu">
-                           <!--a href="<%=request.getContextPath()%>/patient/${patient.id_patient}/addDiag">
-                              <i class="fa fa-fw fa-plus"></i> Créer un diagnostic
-                           </a-->
+                        <ul class="dropdown-menu" role="menu">                           
                            <li><a data-toggle="modal" data-target="#modelAddHM"><i class="fa fa-fw fa-plus"></i> Ajouter</a></li>
                            <li><a href=""><i class="fa fa-fw fa-bars"></i> Historique médical</a></li>
                            <li class="divider"></li>
@@ -164,6 +161,9 @@
                               </li> 
                            </c:if>
                            <c:if test="${HMs.size() != 0}">
+                              <c:if test="${HMs.size() > 5}"> 
+                                 <c:set var="HMs" value="${HMs.subList(0,5)}" />
+                              </c:if>
                               <c:forEach items="${HMs}" var="item">
                                  <li class="list-group-item d-flex justify-content-between align-items-center">
                                     ${item.description}
@@ -183,8 +183,7 @@
                   </div>
                </div>
             </div><!-- /.box -->
-               
-               
+
             <!-- Prescription  -->
             <div class="box">
                <div class="box-header with-border">
@@ -212,11 +211,15 @@
                                  <i>Aucune préscription</i>
                               </li> 
                            </c:if>
+                           <c:if test="${prescriptions.size() > 5}"> 
+                              <c:set var="prescriptions" value="${prescriptions.subList(0,5)}" />
+                           </c:if>
                            <c:if test="${prescriptions != null || prescriptions.size() != 0}">
                               <c:forEach items="${prescriptions}" var="item">
                                  <li class="list-group-item d-flex justify-content-between align-items-center">
                                     ${item.description}
                                     <span class="badge">${item.date}</span>
+                                    <i class="fa fa-fw fa-trash-o" onclick="deletePrescription(${item.id_prescription});"></i>
                                  </li>  
                               </c:forEach>
                            </c:if>
@@ -231,10 +234,31 @@
                      <div class="col-md-4"></div>
                   </div>
                </div>
-            </div><!-- /.box -->            
+                  
+               <!-- Form to delete Elements -->
+               <form id="formDeletePrescription" method="POST" action="<%=request.getContextPath()%>/deletePrescription">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="form" value="patientDashboard" />
+                  <input type="hidden" id="id_patient" name="id_patient" value="${patient.id_patient}" />
+                  <input type="hidden" id="id_prescription" name="id_prescription" />            
+               </form>
                
-         </div><!-- /.col -->
+               <script>                  
+                  function deletePrescription(id){
+                     document.getElementById("id_prescription").value = id;
+                     document.getElementById("formDeletePrescription").submit();
+                     //var id_p = document.getElementById("id_patient").value;
+                     //alert("id_patient: "+id_p+"\n id_prescription: "+id);
+                  }
+                  function openPrescription(id){
+                     window.open("<%=request.getContextPath()%>/prescription/"+id, "_self");
+                  }
+               </script>
+               
+            </div><!-- /.box -->            
             
+         </div><!-- /.col -->
+         
          <div class="col-md-4">
             <!-- Imagerie  -->
             <div class="box">
@@ -249,16 +273,18 @@
                   <div class="row">
                      <div class="col-md-12">
                         <ul class="list-group">                     
-                           <c:if test="${HMs.size() == 0}">
+                           <c:if test="${imageries.size() == 0}">
                               <li class="list-group-item d-flex justify-content-between align-items-center">
-                                 <i>Aucun Historique médical</i>
+                                 <i>Imagerie vide</i>
                               </li> 
                            </c:if>
-                           <c:if test="${HMs.size() != 0}">
-                              <c:forEach items="${HMs}" var="item">
+                           <c:if test="${imageries.size() > 5}"> 
+                              <c:set var="imageries" value="${imageries.subList(0,5)}" />
+                           </c:if>
+                           <c:if test="${imageries.size() != 0}">
+                              <c:forEach items="${imageries}" var="item">
                                  <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    ${item.description}
-                                    <span class="badge">${item.date}</span>
+                                    ${item.filename}
                                  </li>  
                               </c:forEach>
                            </c:if>
@@ -273,17 +299,16 @@
                      <div class="col-md-4"></div>
                   </div>
                </div>
-            </div><!-- /.box -->
-               
-         </div>
-            
-      </div><!-- /.row -->      
-         
+            </div><!-- /.box -->               
+         </div>            
+      </div>
+      <!-- /.row -->
+                     
    </section><!-- /.content -->
 </div><!-- /.content-wrapper -->
-   
-   
-   
+
+
+
 <!--  Model Add Diagnostic  -->
 <div class="modal fade" id="modelAddDiag" role="dialog">
    <div class="modal-dialog">
@@ -292,7 +317,7 @@
          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
          <input type="hidden" name="form" value="patienDashboard" />
          <input type="hidden" name="id_patient" value="${patient.id_patient}" />
-            
+         
          <!-- Modal content-->
          <div class="modal-content">
             <div class="modal-header">
@@ -325,7 +350,7 @@
       </form>
    </div>
 </div>
-   
+
 <!--  Model Add Historique Medical  -->
 <div class="modal fade" id="modelAddHM" role="dialog">
    <div class="modal-dialog">
@@ -334,7 +359,7 @@
          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
          <input type="hidden" name="form" value="patienDashboard" />
          <input type="hidden" name="id_patient" value="${patient.id_patient}" />
-            
+         
          <!-- Modal content-->
          <div class="modal-content">
             <div class="modal-header">
@@ -367,7 +392,7 @@
       </form>
    </div>
 </div>
-   
+
 <!--  Model Add Prescription  -->
 <div class="modal fade" id="modelAddPrescription" role="dialog">
    <div class="modal-dialog">
@@ -376,7 +401,7 @@
          <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
          <input type="hidden" name="form" value="patienDashboard" />
          <input type="hidden" name="id_patient" value="${patient.id_patient}" />
-            
+         
          <!-- Modal content-->
          <div class="modal-content">
             <div class="modal-header">
@@ -414,5 +439,5 @@
       </form>
    </div>
 </div>
-   
+
 <jsp:include page="/fragments/foot.jsp" />

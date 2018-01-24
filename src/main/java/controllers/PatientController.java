@@ -1,10 +1,9 @@
 package controllers;
 
 import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import models.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import services.Service;
 import services.ServiceImpl;
@@ -72,75 +69,6 @@ public class PatientController {
       return mv; //this.patient(patient.getId_patient(), request);
    }
    
-   @RequestMapping(value={"/addPatient"}, method = RequestMethod.GET)
-   public ModelAndView addPatient(ModelMap model, HttpServletRequest req){
-      ModelAndView mv = new ModelAndView("patient/addPatient");
-      model.addAttribute("pageTitle", "Création d'un nouveau patient");
-      model.addAttribute("alertInfo", "Création dun nouveau patient");
-      //req.setAttribute("alertInfo", "Création d'un nouveau patient req");
-      //mv.addObject("alertInfo", "Création d'un nouveau patient req");
-      return mv;
-   }
-   
-   @RequestMapping(value={"/addPatient"}, method = RequestMethod.POST)
-   public ModelAndView submitAddPatient(@ModelAttribute Patient patient,ModelMap model, HttpServletRequest request,RedirectAttributes params){
-      
-      Diagnostic diag = new Diagnostic();
-      String errorMessage = "";
-      boolean hasError = false;
-      boolean withDiag = false;
-      
-      if(request.getParameter("withDiagnostic")!=null && request.getParameter("withDiagnostic").equals("on")){
-         withDiag = true;
-         if(!request.getParameter("nombre_seances").isEmpty())
-            diag.setNombre_seances(Integer.parseInt(request.getParameter("nombre_seances")));
-         if(!request.getParameter("description").isEmpty())
-            diag.setDescription(request.getParameter("description") );
-      }
-      
-      //si nom empty
-      if(patient.getNom().isEmpty()){
-         errorMessage = errorMessage + "<li>Le champ Nom est necessaire pour valider la création d'un nouveau patient.</li>";
-         hasError = true;
-      }
-      //si description empty
-      if(withDiag && request.getParameter("description").isEmpty()){
-         hasError = true;
-         errorMessage = "Veuillez saisir la description du diagnostic" + errorMessage;
-      }
-      if(hasError){
-         model.addAttribute("diagnostic", diag);
-         model.addAttribute("patient", patient);
-         params.addFlashAttribute("alertWarning", errorMessage);
-         return new ModelAndView("patient/addPatient");
-      }
-      else{
-         model.addAttribute("pageTitle", "Création d'un nouveau patient");
-         model.addAttribute("successMessage", "Creation du patient "+patient.getNom()+" "+patient.getPrenom()+" reussi.");
-         model.addAttribute("patient", null);
-         model.addAttribute("diagnostic", null);
-         int id_patient = service.getNextID("patient");
-         patient.setId_patient(id_patient);
-         patient.setId_user(0);
-         //patient.setCreated_at(null);
-         
-         try{
-            service.addPatient(patient);
-            if(withDiag)
-            {
-               diag.setId_patient(id_patient);
-               diag.setDescription(request.getParameter("description"));
-               diag.setNombre_seances(Integer.parseInt(request.getParameter("nombre_seances")));
-               service.addDiagnostic(diag);
-            }
-         }catch(Exception e){
-            model.addAttribute("alertDanger", "Erreur de création du patient. <br>"+e.getMessage()+" - "+e.getCause());
-         }
-      }
-      model.addAttribute("alertSuccess", "Création du patient reussi.");
-      return new ModelAndView("patient/addPatient");
-   }
-   
    @RequestMapping(value={"/deletePatient"}, method = RequestMethod.POST)
    public ModelAndView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, RedirectAttributes params){
       try{
@@ -156,51 +84,73 @@ public class PatientController {
    
    //Liste des patients ********************************************************
    @RequestMapping(value={"/patients"}, method = RequestMethod.GET)
-   public ModelAndView listPatient(ModelMap model){
-      
+   public ModelAndView listPatient(ModelMap model, HttpServletRequest req){
+      int id_user = 1;//Integer.parseInt(req.getSession().getAttribute("id_user").toString());
       model.addAttribute("pageTitle", "Liste des patients");
-      model.addAttribute("patients", service.getPatients(0));
-      for (Patient patient : service.getPatients(0)) {
-         System.err.println(patient.toString());
-      }
-      model.addAttribute("alertInfo","Liste des patients: "+service.getPatients(0).size()+" patient(s)");
+      model.addAttribute("patients", service.getPatients(id_user));
+      
       return new ModelAndView("patient/listPatients");
    }
    
    @RequestMapping(value={"/patient/{id_patient}"}, method = RequestMethod.GET)
    public ModelAndView patient(@ModelAttribute("id_patient") int id_patient, HttpServletRequest req,RedirectAttributes params){
       Patient p = null;
+      int id_user = Integer.parseInt(req.getSession().getAttribute("id_user").toString() );
       p = service.getPatient(id_patient);
       if(p==null){
-         return new ModelAndView("redirect:list");
-         //return new ModelAndView("patient/addPatient");
+         return new ModelAndView("redirect:patients");
       }
       else{
          ArrayList<Diagnostic> diags = new ArrayList<>();
          diags = service.getDiagnostics(id_patient);
-         ArrayList<Historique_medical> HMs = new ArrayList<>();
-         HMs = service.getHistorique_medicals(id_patient);
+         ArrayList<Historique_medical> HMs = service.getHistorique_medicals(id_patient);
+         ArrayList<Diagnostic> diagnostics = service.getDiagnostics(id_patient);
+         ArrayList<Prescription> prescriptions = service.getPrescriptions(id_patient);
+         ArrayList<Imagerie> imageries = service.getImageriesOfPatient(id_patient);
+         //List<Diagnostic> sub = diagnostics.subList(0, 5);
          
          ModelAndView mv = new ModelAndView();
          mv.setViewName("patient/patient");
          mv.addObject("patient", p);
          mv.addObject("pageTitle",p.getNom()+" "+p.getPrenom());
-         mv.addObject("diags", service.getDiagnosticsTopX(id_patient,5));
-         //mv.addObject("diagsNumber", diags.size());
-         mv.addObject("HMs", service.getHistorique_medicalsTopX(id_patient,10));
-         mv.addObject("prescriptions", service.getPrescriptions(id_patient) );
+         
+         mv.addObject("diagnostics", diagnostics);
+         mv.addObject("prescriptions", prescriptions);
+         mv.addObject("imageries", imageries);
+         mv.addObject("HMs", HMs);
+         
          return mv;
       }
    }
    
-   
-   
-   @RequestMapping(value = "/patient/**")
-   public String errorPage1(ModelMap model){
-      model.addAttribute("pageTitle", "Erreur - KinéApp");
-      model.addAttribute("errorMessage", "URL requested doesn't exist !!");
-      return "errorPages/errorPage";
+   @RequestMapping(value="/addPatient", method = RequestMethod.POST)
+   public ModelAndView submitAddPatient(ModelMap model, HttpServletRequest request,RedirectAttributes params){
+      
+      try{
+         int id_patient = service.getNextID("patient");
+         Patient patient = new Patient();
+         patient.setId_patient(id_patient);
+         patient.setId_user(Integer.parseInt(request.getSession().getAttribute("id_user").toString()));
+         patient.setNom(request.getParameter("nom"));
+         patient.setPrenom(request.getParameter("prenom"));
+         patient.setDob(request.getParameter("dob"));
+         patient.setCin(request.getParameter("cin"));
+         patient.setAdresse(request.getParameter("adresse"));
+         service.addPatient(patient);
+         params.addFlashAttribute("alertSuccess", "Création du patient "+patient.getNom()+" "+patient.getPrenom()+" reussi.");
+      }catch(Exception e){
+         params.addFlashAttribute("alertDanger", "Erreur de création du patient. <li>"+e.getMessage()+"</li>" );
+      }
+      return new ModelAndView("redirect:patients");
    }
+   /*
+   
+   @RequestMapping(value = "/**")
+   public String errorPage1(ModelMap model){
+   model.addAttribute("pageTitle", "Erreur - KinéApp");
+   model.addAttribute("errorMessage", "URL requested doesn't exist !!");
+   return "errorPages/errorPage";
+   }*/
    
    
    /*

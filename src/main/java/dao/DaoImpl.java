@@ -443,6 +443,27 @@ public class DaoImpl implements Dao{
    }
    
    @Override
+   public ArrayList<Imagerie> getImageriesOfPatient(int id_patient) {
+      ArrayList<Imagerie> items = new ArrayList<Imagerie>();
+      try{
+         //String query = "SELECT * FROM imagerie WHERE id_prescription="+id_patient+" ;";
+         String query = "SELECT * FROM imagerie WHERE id_prescription IN (SELECT id_prescription FROM prescription WHERE id_patient = "+id_patient+")";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Imagerie p = new Imagerie();
+            p.setId_imagerie(rs.getInt("id_imagerie"));
+            p.setId_prescription(rs.getInt("id_prescription"));
+            p.setFilename(rs.getString("filename"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getImageriesOfPrescription(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   
+   @Override
    public ArrayList<Patient> getPatientsOfUser(int id_user) {
       ArrayList<Patient> items = new ArrayList<Patient>();
       try{

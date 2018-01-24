@@ -45,6 +45,8 @@ public interface Service {
    public ArrayList<Historique_medical> getHistorique_medicalsTopX(int id_patient, int x);
    
    public ArrayList<Imagerie> getImageries(int id);
+   public ArrayList<Imagerie> getImageriesOfPatient(int id_patient);
+   
    public ArrayList<Patient> getPatients(int id_user);
    public ArrayList<Prescription> getPrescriptions(int id_patient);
    public ArrayList<User> getUsers();

@@ -36,7 +36,10 @@ public interface Dao {
    
    public ArrayList<Diagnostic> getDiagnosticsOfPatient(int id_patient);
    public ArrayList<Historique_medical> getHistorique_medicalOfPatient(int id_patient);
+   
    public ArrayList<Imagerie> getImageriesOfPrescription(int id_prescription);
+   public ArrayList<Imagerie> getImageriesOfPatient(int id_patient);
+   
    public ArrayList<Patient> getPatientsOfUser(int id_user);
    public ArrayList<Prescription> getPrescriptionsOfPatient(int id_patient);
       

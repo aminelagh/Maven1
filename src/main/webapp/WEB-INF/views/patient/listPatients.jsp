@@ -30,7 +30,7 @@
                      <div class="btn-group">
                         <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
                         <ul class="dropdown-menu" role="menu">
-                           <li><a href="<%=request.getContextPath()%>/patient/add">Créer un nouveau patient</a></li>
+                           <li><a data-toggle="modal" data-target="#modelAddPatient"><i class="fa fa-fw fa-plus"></i> Créer un nouveau patient</a></li>
                            <li class="divider"></li>
                            <li><a href="#">Imprimer la liste</a></li>
                         </ul>
@@ -43,7 +43,7 @@
                   <div class="row">
                      <div class="col-md-12">
                         
-                        <form id="formDeletingPatient" method="POST" action="<%=request.getContextPath()%>/patient/delete">
+                        <form id="formDeletingPatient" method="POST" action="<%=request.getContextPath()%>/deletePatient">
                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />            
                            <input type="hidden" id="id_patient_for_delete" name="id_patient" />            
                         </form>
@@ -63,7 +63,7 @@
                                  <th></th>
                                  <th>Patient</th>
                                  <th>dob</th>
-                                 <th>Fumeur</th>
+                                 <th></th>
                                  <th></th>
                               </tr>
                            </tfoot>
@@ -73,7 +73,7 @@
                                     <td>${item.id_patient}</td>
                                     <td>${item.nom} ${item.prenom}</td>
                                     <td>${item.dob}</td>
-                                    <td>${item.isFumeur()? "oui" : "non"}</td>
+                                    <td><input type="checkbox" class="minimal-red" disabled="true" ${item.isFumeur()? "checked" : "non"} /></td>
                                     <td>
                                        <i class="fa fa-fw fa-info" onclick="openPatient(${item.id_patient});"></i>                                    
                                        <i class="fa fa-fw fa-trash-o" onclick="deletePatientFunction(${item.id_patient});"></i>
@@ -82,7 +82,7 @@
                               </c:forEach>                     
                            </tbody>
                         </table>
-                        
+                           
                      </div>
                      <script>
                         
@@ -115,8 +115,6 @@
                                  $(this).html( '<input type="text" placeholder="Patient" size="10"/>' );
                               else if(title=='dob')
                                  $(this).html( '<input type="text" placeholder="Date" size="10"/>' );
-                              else if(title=='Fumeur')
-                                 $(this).html( '<input type="text" placeholder="Fumeur" size="5"/>' );
                               else if(title=='')
                                  ;//$(this).html( '<input type="text" placeholder="Patient" size="7"/>' );
                               
@@ -182,7 +180,7 @@
                         } );
                         
                      </script>       
-                     
+                        
                   </div><!-- /.row -->
                </div><!-- ./box-body -->
                <div class="box-footer">
@@ -192,10 +190,78 @@
          </div><!-- /.col -->
       </div><!-- /.row -->
          
-      
+         
    </section>
    <!-- /.content -->
 </div><!-- /.content-wrapper -->
    
    
+<!--  Model Add patient  -->
+<div class="modal fade" id="modelAddPatient" role="dialog">
+   <div class="modal-dialog">
+      <!-- Form begin  addPrescription -->
+      <form method="POST" action="<%=request.getContextPath()%>/addPatient">
+         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+         <input type="hidden" name="form" value="listPatients" />
+         <input type="hidden" name="id_patient" value="${patient.id_patient}" />
+            
+         <!-- Modal content-->
+         <div class="modal-content">
+            <div class="modal-header">
+               <button type="button" class="close" data-dismiss="modal">&times;</button>
+               <h4 class="modal-title">Création d'un nouveau Patient</h4>
+            </div>
+               
+            <div class="modal-body">
+               <div class="row"> 
+                  
+                  <div class="col-lg-6">                  
+                     <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom" value="${patient.nom}" required/>
+                        <small id="emailHelp" class="form-text text-muted">required</small>
+                     </div>              
+                     <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" class="form-control" id="prenom" name="prenom" placeholder="Prénom" value="${patient.prenom}" />
+                     </div>  
+                     <div class="form-group">
+                        <label>Date de naissance</label>
+                        <input type="text" class="form-control" id="dob" name="dob" placeholder="Date de naissance" value="${patient.dob}" />
+                     </div>                          
+                  </div>
+                     
+                  <div class="col-lg-6">                  
+                     <div class="form-group">
+                        <label>CIN</label>
+                        <input type="text" class="form-control" id="cin" name="cin" placeholder="CIN" value="${patient.cin}" />
+                     </div>              
+                     <div class="form-group">
+                        <label>Adresse</label>
+                        <input type="text" class="form-control" id="adresse" name="adresse" placeholder="Adresse" value="${patient.adresse}" />
+                     </div>  
+                     <div class="form-group">
+                        <label>
+                           <input type="checkbox" class="flat-red" name="fumeur" <c:if test="${patient.fumeur==true}">checked</c:if> />
+                              Fumeur
+                           </label>
+                        </div>                            
+                           
+                           
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                     <div class="col-md-2">
+                        <div class="form-group">               
+                           <button type="submit" class="btn btn-primary">Ajouter</button>  
+                        </div>  
+                     </div>
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                  </div>
+                     
+               </div>
+         </form>
+      </div>
+   </div>
+      
 <jsp:include page="/fragments/foot.jsp" />

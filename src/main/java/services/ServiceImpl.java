@@ -170,6 +170,11 @@ public class ServiceImpl implements Service{
       return dao.getImageriesOfPrescription(id);
    }
    
+    @Override
+   public ArrayList<Imagerie> getImageriesOfPatient(int id_patient) {
+      return dao.getImageriesOfPatient(id_patient);
+   }
+   
    @Override
    public ArrayList<Patient> getPatients(int id_user) {
       return dao.getPatientsOfUser(id_user);

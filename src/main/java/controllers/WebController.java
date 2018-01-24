@@ -2,6 +2,10 @@ package controllers;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import models.Patient;
+import models.User;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -10,29 +14,48 @@ import org.springframework.ui.ModelMap;
 import org.springframework.security.access.annotation.*;
 import org.springframework.security.*;
 import org.springframework.web.bind.annotation.PathVariable;
+import services.Service;
+import services.ServiceImpl;
 
 @Controller
 public class WebController {
    
+   ApplicationContext context;
+   Service service;
+   
    public WebController(){
       System.out.println("controllers.WebController.<init>()");
+      try{
+         context = new ClassPathXmlApplicationContext("Beans.xml");
+         service = (ServiceImpl)context.getBean("beanService");
+      }
+      catch(Exception e){
+         String errorMessage = "";
+         errorMessage = errorMessage + "<li>Erreur de connexion avec la base de données ! veuillez réessayer ultérieurement.</li>";
+         errorMessage = errorMessage + "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage = errorMessage + "<li>Message: "+e.getMessage()+"</li>";
+         System.out.println(errorMessage);
+      }
    }
-   
-   
-   @RequestMapping(value = "/aaa/{var1}", method = RequestMethod.GET)
-   public ModelAndView aa() {
-      ModelAndView mv = new ModelAndView("home");
-      int var1 = 5;
-      mv.addObject("var1",var1);
-      mv.addObject("var2", 6);
-      System.out.println("\n\n\n==> "+var1);
-      return mv;
-   }
-   
    
    
    @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
    public ModelAndView test1(ModelMap model, HttpServletRequest request){
+      
+      User u = service.getUser(1);
+      request.getSession().setAttribute("id_user", u.getId_user());
+      request.getSession().setAttribute("nom", u.getNom());
+      request.getSession().setAttribute("prenom", u.getPrenom());
+      request.getSession().setAttribute("email", u.getEmail());
+      
+      model.addAttribute("pageTitle", "Kiné-App");
+      return new ModelAndView("home");
+   }
+   
+   @RequestMapping(value={"/logout"}, method = RequestMethod.GET)
+   public ModelAndView logout(ModelMap model, HttpServletRequest request){
+      
+      request.getSession().invalidate();
       model.addAttribute("pageTitle", "Kiné-App");
       return new ModelAndView("home");
    }
@@ -51,10 +74,7 @@ public class WebController {
    }
    
    @RequestMapping(value={"/login"}, method = RequestMethod.POST)
-   public ModelAndView submitLogin(
-           ModelMap model,
-           HttpServletRequest request,
-           HttpSession session){
+   public ModelAndView submitLogin(ModelMap model,HttpServletRequest request,HttpSession session){
       
       String username = request.getParameter("username");
       String password = request.getParameter("password");
@@ -85,33 +105,16 @@ public class WebController {
    
    
    
-   @RequestMapping(value="/logout", method = RequestMethod.GET)
+   /*@RequestMapping(value="/logout", method = RequestMethod.GET)
    public ModelAndView logout(ModelMap model,HttpSession session){
-      if(session.getAttribute("username")==null){
-         model.addAttribute("message", "You are not logged-in !! so no need to logout");
-         return new ModelAndView("redirect:login");
-      }
-      else{
-         session.invalidate();
-         model.addAttribute("message", "You are logged-out !! see u soon");
-         return new ModelAndView("index");
-      }
+   if(session.getAttribute("username")==null){
+   model.addAttribute("message", "You are not logged-in !! so no need to logout");
+   return new ModelAndView("redirect:login");
    }
-   
-   
-   
-   
-   @RequestMapping(value={"/p1","/page1"}, method = RequestMethod.GET)
-   public ModelAndView page1(ModelMap model){
-      return new ModelAndView("page1");
+   else{
+   session.invalidate();
+   model.addAttribute("message", "You are logged-out !! see u soon");
+   return new ModelAndView("index");
    }
-   
-   @RequestMapping(value={"/p1","/page2"}, method = RequestMethod.GET)
-   public ModelAndView page2(ModelMap model){
-      model.addAttribute("message", "/page2 with Page1 view");
-      return new ModelAndView("page1");
-   }
-   
-   
-   
+   }*/
 }
