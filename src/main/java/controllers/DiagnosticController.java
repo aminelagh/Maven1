@@ -33,52 +33,8 @@ public class DiagnosticController {
          System.out.println(errorMessage);
       }
    }
-   /*
-   @RequestMapping(value="/patient/addDiag", method = RequestMethod.POST)
-   public ModelAndView submitAddDiagnostic(RedirectAttributes params, HttpServletRequest req){
-      Diagnostic diag = new Diagnostic();
-      diag.setId_diagnostic(service.getNextID("diagnostic"));
-      diag.setId_patient(Integer.parseInt(req.getParameter("id_patient")));
-      diag.setNombre_seances(Integer.parseInt(req.getParameter("nombre_seances")));
-      diag.setDescription(req.getParameter("description"));
-      
-      System.out.println("================== submitAddDiagnostic ==================");
-      System.out.println("form : "+req.getParameter("form"));
-      System.out.println("diag : "+diag.toString() );
-      System.out.println("id_patient : "+diag.getId_patient());
-      System.out.println("description : "+diag.getDescription());
-      System.out.println("nombre_seances : "+diag.getNombre_seances());
-      
-      ModelAndView mv = new ModelAndView("redirect:/patient/"+diag.getId_patient());
-      return mv;
-      String errorMessage = "";
-      boolean hasError = false;
-      
-      if(diag.getDescription().length()==0){
-         hasError = true;
-         errorMessage += "<li>Veuillez saisir la description du diagnostic.</li>";
-      }
-      try{
-         if(!hasError){
-            diag.setId_diagnostic(service.getNextID("diagnostic"));
-            service.addDiagnostic(diag);
-         }
-      }catch(Exception e){
-         hasError = true;
-         errorMessage += 
-                 "<li>Erreur de création du diagnostic.</li>"+
-                 "<li>Cause: "+e.getCause()+
-                 "</li>"+"<li>Message: "+e.getMessage()+"</li>";
-      }
-      if(hasError){
-         params.addFlashAttribute("alertWarning", errorMessage);
-         //mv.addObject("diag", diag);
-      }
-      else
-         params.addFlashAttribute("alertSuccess", "Création du diagnostic réussi.");
-      return mv;
-   }
-   */
+   
+   //submit Add Diagnostic *****************************************************
    @RequestMapping(value="/addDiag", method = RequestMethod.POST, params = {"form=patienDashboard"})
    public ModelAndView submitAddDiagnosticPatientDashboard(@ModelAttribute Diagnostic diag, RedirectAttributes params, HttpServletRequest req){
       System.out.println("================== submitAddDiagnostic ==================");
@@ -98,7 +54,7 @@ public class DiagnosticController {
          }
       }catch(Exception e){
          hasError = true;
-         errorMessage += 
+         errorMessage +=
                  "<li>Erreur de création du diagnostic.</li>"+
                  "<li>Cause: "+e.getCause()+
                  "</li>"+"<li>Message: "+e.getMessage()+"</li>";
@@ -112,17 +68,52 @@ public class DiagnosticController {
       return mv;
    }
    
-   /*
-   @RequestMapping(value="/patient/addDiag", params = {"description=null"})
-   public ModelAndView submitAddDiagnosticEmpty(RedirectAttributes params, HttpServletRequest req){
-      System.out.println("================== submitAddDiagnosticEmpty ==================");
-      System.out.println("================== "+req.getParameter("id_patient") );
+   //Submit Update Diagnostic **************************************************
+   @RequestMapping(value={"/updateDiag"}, method = RequestMethod.POST)
+   public ModelAndView submitUpdateDiag(RedirectAttributes params, HttpServletRequest req){
+      System.out.println("***************");
       
-      ModelAndView mv = new ModelAndView("redirect:/patient/1");   
-      params.addFlashAttribute("alertSuccess", "submitAddDiagnosticEmpty.");
+      int id_patient = Integer.parseInt(req.getParameter("id_patient"));
+      ModelAndView mv = new ModelAndView("redirect:/patient/"+id_patient ); //"redirect:"+patient.getId_patient());
+      
+      try{
+         Diagnostic diag = new Diagnostic();
+         diag.setId_diagnostic(Integer.parseInt(req.getParameter("id_diagnostic")));
+         diag.setId_patient(Integer.parseInt(req.getParameter("id_patient")));
+         diag.setDescription(req.getParameter("description"));
+         diag.setNombre_seances(Integer.parseInt(req.getParameter("nombre_seances")));
+         
+         System.out.println(diag.toString());
+         
+         service.updateDiagnostic(diag);
+         
+      }catch(Exception e){
+         String errorMessage = "<li>Erreur de modification du diagnostic.</li>";
+         errorMessage += "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage += "<li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+      }
+      
+      params.addFlashAttribute("alertSuccess", "Modification réussi.");
       return mv;
-   }*/
+   }
    
+   
+   //Delete Diagnostic *********************************************************
+   @RequestMapping(value={"/deleteDiagnostic"}, method = RequestMethod.POST)
+   public ModelAndView deleteDiagnostic(@ModelAttribute("id_diagnostic") int id_diagnostic, RedirectAttributes params, HttpServletRequest req){
+      int id_patient = 0;
+      try{
+         id_patient= Integer.parseInt(req.getParameter("id_patient").toString());
+         service.deleteDiagnostic(id_diagnostic);
+         //delete dossier patient
+         params.addFlashAttribute("alertSuccess", "Diagnostic effacé.");
+      }catch(Exception e){
+         String errorMessage = "Erreur de suppression du diagnostic. <li>Cause: "+e.getCause()+"</li><li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+      }
+      return new ModelAndView("redirect:patient/"+id_patient);
+   }
    
    
    

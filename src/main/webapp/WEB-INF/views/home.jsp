@@ -1,5 +1,16 @@
-<jsp:include page="/fragments/head.jsp" />
-<!-- Right side column. Contains the navbar and content of the page -->
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+   <jsp:include page="layouts/header.jsp" />
+      
+   <body class="skin-blue">
+      <div class="wrapper">
+         
+         <jsp:include page="layouts/menu_1.jsp" />
+            
+         <jsp:include page="layouts/menu_2.jsp" />
+           
+
 <div class="content-wrapper">
    <!-- Content Header (Page header) -->
    <section class="content-header">
@@ -103,32 +114,6 @@
                               <input type="checkbox" value="" name=""/>
                               <!-- todo text -->
                               <span class="text">Task number 2</span>
-                              <!-- Emphasis label -->
-                              <small class="label label-info"><i class="fa fa-clock-o"></i> 2 mins</small>
-                              <!-- General tools such as edit or delete-->
-                              <div class="tools">
-                                 <i class="fa fa-edit"></i>
-                                 <i class="fa fa-trash-o"></i>
-                              </div>
-                           </li>
-                           <li>
-                              <!-- checkbox -->
-                              <input type="checkbox" value="" name=""/>
-                              <!-- todo text -->
-                              <span class="text">Task number 3</span>
-                              <!-- Emphasis label -->
-                              <small class="label label-info"><i class="fa fa-clock-o"></i> 2 mins</small>
-                              <!-- General tools such as edit or delete-->
-                              <div class="tools">
-                                 <i class="fa fa-edit"></i>
-                                 <i class="fa fa-trash-o"></i>
-                              </div>
-                           </li>
-                           <li>
-                              <!-- checkbox -->
-                              <input type="checkbox" value="" name=""/>
-                              <!-- todo text -->
-                              <span class="text">Task number 4</span>
                               <!-- Emphasis label -->
                               <small class="label label-info"><i class="fa fa-clock-o"></i> 2 mins</small>
                               <!-- General tools such as edit or delete-->
@@ -323,4 +308,85 @@
 </div><!-- /.content-wrapper -->
    
    
-<jsp:include page="/fragments/foot.jsp" />
+            
+         <!--  Model Add patient  -->
+         <div class="modal fade" id="modelAddPatient" role="dialog">
+            <div class="modal-dialog">
+               <!-- Form begin  addPrescription -->
+               <form method="POST" action="<%=request.getContextPath()%>/addPatient">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="form" value="listPatients" />
+                  <input type="hidden" name="id_patient" value="${patient.id_patient}" />
+                     
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Création d'un nouveau Patient</h4>
+                     </div>
+                        
+                     <div class="modal-body">
+                        <div class="row"> 
+                           
+                           <div class="col-lg-6">                  
+                              <div class="form-group">
+                                 <label>Nom</label>
+                                 <input type="text" class="form-control" id="nom" name="nom" placeholder="Nom" value="${patient.nom}" required/>
+                                 <small id="emailHelp" class="form-text text-muted">required</small>
+                              </div>              
+                              <div class="form-group">
+                                 <label>Prénom</label>
+                                 <input type="text" class="form-control" id="prenom" name="prenom" placeholder="Prénom" value="${patient.prenom}" />
+                              </div>  
+                              <div class="form-group">
+                                 <label>Date de naissance</label>
+                                 <input type="text" class="form-control" id="dob" name="dob" placeholder="Date de naissance" value="${patient.dob}" />
+                              </div>                          
+                           </div>
+                              
+                           <div class="col-lg-6">                  
+                              <div class="form-group">
+                                 <label>CIN</label>
+                                 <input type="text" class="form-control" id="cin" name="cin" placeholder="CIN" value="${patient.cin}" />
+                              </div>              
+                              <div class="form-group">
+                                 <label>Adresse</label>
+                                 <input type="text" class="form-control" id="adresse" name="adresse" placeholder="Adresse" value="${patient.adresse}" />
+                              </div>  
+                              <div class="form-group">
+                                 <label>
+                                    <input type="checkbox" class="flat-red" name="fumeur" <c:if test="${patient.fumeur==true}">checked</c:if> />
+                                       Fumeur
+                                    </label>
+                                 </div>                              
+                                    
+                              </div>
+                           </div> 
+                        </div>
+                        <!-- modal-footer -->
+                        <div class="modal-footer">
+                           <div class="col-md-2">
+                              <div class="form-group">               
+                                 <button type="submit" class="btn btn-primary">Ajouter</button>  
+                              </div>  
+                           </div>
+                           <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                        </div>
+                           
+                     </div>
+                  </form>
+               </div>
+            </div>
+               
+               
+               
+         <jsp:include page="layouts/footer.jsp" />
+            
+            
+            
+      </div>
+      <!-- ./wrapper -->
+         
+      <jsp:include page="layouts/scripts.jsp" />
+         
+   </body>
+</html>

@@ -52,6 +52,11 @@ public class WebController {
       return new ModelAndView("home");
    }
    
+   @RequestMapping(value={"/aze"}, method = RequestMethod.GET)
+   public ModelAndView test(){   
+      return new ModelAndView("menu");
+   }
+   
    @RequestMapping(value={"/logout"}, method = RequestMethod.GET)
    public ModelAndView logout(ModelMap model, HttpServletRequest request){
       

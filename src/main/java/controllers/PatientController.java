@@ -41,6 +41,71 @@ public class PatientController {
    /*@RequestMapping(value={"/patient","/patient/index"}, method = RequestMethod.GET)
    public ModelAndView test1(ModelMap model){return new ModelAndView("patient/index");}*/
    
+   
+   //Liste des patients ********************************************************
+   @RequestMapping(value={"/patients"}, method = RequestMethod.GET)
+   public ModelAndView listPatient(ModelMap model, HttpServletRequest req){
+      int id_user = 1;//Integer.parseInt(req.getSession().getAttribute("id_user").toString());
+      model.addAttribute("pageTitle", "Mes patients");
+      model.addAttribute("patients", service.getPatients(id_user));
+      return new ModelAndView("patient_list");
+   }
+   
+   //Patient DashBoard *********************************************************
+   @RequestMapping(value={"/patient/{id_patient}"}, method = RequestMethod.GET)
+   public ModelAndView patient(@ModelAttribute("id_patient") int id_patient, HttpServletRequest req,RedirectAttributes params){
+      Patient p = null;
+      int id_user = Integer.parseInt(req.getSession().getAttribute("id_user").toString() );
+      p = service.getPatient(id_patient);
+      if(p==null){
+         params.addFlashAttribute("alertWarning","Le patient choisi n'existe pas !!");
+         return new ModelAndView("redirect:/patients");
+      }
+      else{
+         ArrayList<Diagnostic> diags = new ArrayList<>();
+         diags = service.getDiagnostics(id_patient);
+         ArrayList<Historique_medical> HMs = service.getHistorique_medicals(id_patient);
+         ArrayList<Diagnostic> diagnostics = service.getDiagnostics(id_patient);
+         ArrayList<Prescription> prescriptions = service.getPrescriptions(id_patient);
+         ArrayList<Imagerie> imageries = service.getImageriesOfPatient(id_patient);
+         
+         ModelAndView mv = new ModelAndView();
+         mv.setViewName("patient_dashboard");
+         mv.addObject("patient", p);
+         mv.addObject("pageTitle",p.getNom()+" "+p.getPrenom());
+         
+         mv.addObject("diagnostics", diagnostics);
+         mv.addObject("prescriptions", prescriptions);
+         mv.addObject("imageries", imageries);
+         mv.addObject("HMs", HMs);
+         
+         return mv;
+      }
+   }
+   
+   //Submit Add Patient ********************************************************
+   @RequestMapping(value="/addPatient", method = RequestMethod.POST)
+   public ModelAndView submitAddPatient(ModelMap model, HttpServletRequest request,RedirectAttributes params){
+      
+      try{
+         int id_patient = service.getNextID("patient");
+         Patient patient = new Patient();
+         patient.setId_patient(id_patient);
+         patient.setId_user(Integer.parseInt(request.getSession().getAttribute("id_user").toString()));
+         patient.setNom(request.getParameter("nom"));
+         patient.setPrenom(request.getParameter("prenom"));
+         patient.setDob(request.getParameter("dob"));
+         patient.setCin(request.getParameter("cin"));
+         patient.setAdresse(request.getParameter("adresse"));
+         service.addPatient(patient);
+         params.addFlashAttribute("alertSuccess", "Création du patient "+patient.getNom()+" "+patient.getPrenom()+" reussi.");
+      }catch(Exception e){
+         params.addFlashAttribute("alertDanger", "Erreur de création du patient. <li>"+e.getMessage()+"</li>" );
+      }
+      return new ModelAndView("redirect:patients");
+   }
+   
+   //Submit Update Patient *****************************************************
    @RequestMapping(value={"/updatePatient"}, method = RequestMethod.POST)
    public ModelAndView submitUpdatePatient(@ModelAttribute Patient patient, RedirectAttributes params){
       
@@ -69,6 +134,7 @@ public class PatientController {
       return mv; //this.patient(patient.getId_patient(), request);
    }
    
+   //Delete Patient ************************************************************
    @RequestMapping(value={"/deletePatient"}, method = RequestMethod.POST)
    public ModelAndView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, RedirectAttributes params){
       try{
@@ -82,84 +148,4 @@ public class PatientController {
       return new ModelAndView("redirect:patients");
    }
    
-   //Liste des patients ********************************************************
-   @RequestMapping(value={"/patients"}, method = RequestMethod.GET)
-   public ModelAndView listPatient(ModelMap model, HttpServletRequest req){
-      int id_user = 1;//Integer.parseInt(req.getSession().getAttribute("id_user").toString());
-      model.addAttribute("pageTitle", "Liste des patients");
-      model.addAttribute("patients", service.getPatients(id_user));
-      
-      return new ModelAndView("patient/listPatients");
-   }
-   
-   @RequestMapping(value={"/patient/{id_patient}"}, method = RequestMethod.GET)
-   public ModelAndView patient(@ModelAttribute("id_patient") int id_patient, HttpServletRequest req,RedirectAttributes params){
-      Patient p = null;
-      int id_user = Integer.parseInt(req.getSession().getAttribute("id_user").toString() );
-      p = service.getPatient(id_patient);
-      if(p==null){
-         return new ModelAndView("redirect:patients");
-      }
-      else{
-         ArrayList<Diagnostic> diags = new ArrayList<>();
-         diags = service.getDiagnostics(id_patient);
-         ArrayList<Historique_medical> HMs = service.getHistorique_medicals(id_patient);
-         ArrayList<Diagnostic> diagnostics = service.getDiagnostics(id_patient);
-         ArrayList<Prescription> prescriptions = service.getPrescriptions(id_patient);
-         ArrayList<Imagerie> imageries = service.getImageriesOfPatient(id_patient);
-         //List<Diagnostic> sub = diagnostics.subList(0, 5);
-         
-         ModelAndView mv = new ModelAndView();
-         mv.setViewName("patient/patient");
-         mv.addObject("patient", p);
-         mv.addObject("pageTitle",p.getNom()+" "+p.getPrenom());
-         
-         mv.addObject("diagnostics", diagnostics);
-         mv.addObject("prescriptions", prescriptions);
-         mv.addObject("imageries", imageries);
-         mv.addObject("HMs", HMs);
-         
-         return mv;
-      }
-   }
-   
-   @RequestMapping(value="/addPatient", method = RequestMethod.POST)
-   public ModelAndView submitAddPatient(ModelMap model, HttpServletRequest request,RedirectAttributes params){
-      
-      try{
-         int id_patient = service.getNextID("patient");
-         Patient patient = new Patient();
-         patient.setId_patient(id_patient);
-         patient.setId_user(Integer.parseInt(request.getSession().getAttribute("id_user").toString()));
-         patient.setNom(request.getParameter("nom"));
-         patient.setPrenom(request.getParameter("prenom"));
-         patient.setDob(request.getParameter("dob"));
-         patient.setCin(request.getParameter("cin"));
-         patient.setAdresse(request.getParameter("adresse"));
-         service.addPatient(patient);
-         params.addFlashAttribute("alertSuccess", "Création du patient "+patient.getNom()+" "+patient.getPrenom()+" reussi.");
-      }catch(Exception e){
-         params.addFlashAttribute("alertDanger", "Erreur de création du patient. <li>"+e.getMessage()+"</li>" );
-      }
-      return new ModelAndView("redirect:patients");
-   }
-   /*
-   
-   @RequestMapping(value = "/**")
-   public String errorPage1(ModelMap model){
-   model.addAttribute("pageTitle", "Erreur - KinéApp");
-   model.addAttribute("errorMessage", "URL requested doesn't exist !!");
-   return "errorPages/errorPage";
-   }*/
-   
-   
-   /*
-   @RequestMapping(value={"/delete"}, method = RequestMethod.POST)
-   public RedirectView deletePatient(@ModelAttribute Patient patient,@ModelAttribute("id_patient") int id_patient, ModelMap model,RedirectAttributes attributes){
-   //patientService.delete(id_patient);
-   model.addAttribute("successMessage", "Patient Deleted");
-   return new RedirectView("./list");
-   //return new ModelAndView("redirect:list");
-   }
-   */
 }

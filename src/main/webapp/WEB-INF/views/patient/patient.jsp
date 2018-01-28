@@ -129,9 +129,7 @@
             </div><!-- /.box -->
             
          </div><!-- /.col -->
-         
-         
-         
+                  
          <div class="col-md-4">
             <!-- Historique Medical  -->
             <div class="box">

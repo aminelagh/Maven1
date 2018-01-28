@@ -1,20 +1,13 @@
 package controllers;
 
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import models.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,13 +18,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import services.Service;
 import services.ServiceImpl;
-
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.output.*;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -116,19 +104,18 @@ public class PrescriptionController {
       return "redirect:/patient/"+req.getParameter("id_patient");
    }
    
+   //Delete Prescription *******************************************************
    @RequestMapping(value={"/deletePrescription"}, method = RequestMethod.POST)
-   public ModelAndView deletePatient(@ModelAttribute("id_patient") int id_patient,
-           @ModelAttribute("id_prescription") int id_prescription, RedirectAttributes params){
+   public ModelAndView deletePrescription(@ModelAttribute("id_prescription") int id_prescription, RedirectAttributes params, HttpServletRequest req){
+      int id_patient = 0;
       try{
+         id_patient= Integer.parseInt(req.getParameter("id_patient").toString());
          service.deletePrescription(id_prescription);
-         //delete imageries
          params.addFlashAttribute("alertSuccess", "Prescription effacée.");
       }catch(Exception e){
-         String errorMessage = "Erreur de suppression du dossier du patient. <li>Cause: "+e.getCause()+"</li><li>Message: "+e.getMessage()+"</li>";
+         String errorMessage = "Erreur de suppression de la Prescription. <li>Cause: "+e.getCause()+"</li><li>Message: "+e.getMessage()+"</li>";
          params.addFlashAttribute("alertDanger", errorMessage);
       }
       return new ModelAndView("redirect:patient/"+id_patient);
    }
-   
-   
 }
