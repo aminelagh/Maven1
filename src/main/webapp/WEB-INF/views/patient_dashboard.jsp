@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
    <jsp:include page="layouts/header.jsp" />
-      
+   
    <body class="skin-blue">
       <div class="wrapper">
          
@@ -37,14 +37,6 @@
                            <h3 class="box-title">Patient</h3>
                            <div class="box-tools pull-right">
                               <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-                              <div class="btn-group">
-                                 <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
-                                 <ul class="dropdown-menu" role="menu">                           
-                                    <li><a data-toggle="modal" data-target="#modalAddAgenda"><i class="fa fa-fw fa-plus"></i> Nouveau endez-vous</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#">Imprimer la liste</a></li>
-                                 </ul>
-                              </div>
                               <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                            </div>
                         </div><!-- /.box-header -->
@@ -328,7 +320,66 @@
                   
                <!-- Empty Row -->
                <div class="row">
-                  <section class="col-lg-4 connectedSortable">                     
+                  <section class="col-lg-6 connectedSortable">
+                     <%-- @@@@@@@@@@@@@@@@@@@@@@@@@ Agenda @@@@@@@@@@@@@@@@@@@@@@@@@ --%>
+                     <div class="box">
+                        <div class="box-header with-border">
+                           <h3 class="box-title">Rendez-vous <span class="badge badge-info badge-pill"> ${agendas.size()}</span></h3>
+                           <div class="box-tools pull-right">
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <div class="btn-group">
+                                 <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
+                                 <ul class="dropdown-menu" role="menu">                           
+                                    <li><a data-toggle="modal" data-target="#modalAddAgenda"><i class="fa fa-fw fa-plus"></i> Nouveau endez-vous</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Imprimer la liste</a></li>
+                                 </ul>
+                              </div>
+                              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                           </div>
+                        </div>
+                        <div class="box-body">
+                           <div class="row">
+                              <div class="col-md-12">
+                                 <ul class="todo-list">                     
+                                    <c:if test="${diagnostics.size() == 0}">
+                                       <li class="list-group-item d-flex justify-content-between align-items-center">
+                                          <i>Aucun Diagnostic</i>
+                                       </li> 
+                                    </c:if>
+                                    <c:if test="${diagnostics.size() != 0}">
+                                       <c:if test="${diagnostics.size() > 5}"> 
+                                          <c:set var="diagnostics" value="${diagnostics.subList(0,5)}" />
+                                       </c:if>
+                                       <c:forEach items="${diagnostics}" var="diag">
+                                          <!--li class="list-group-item d-flex justify-content-between align-items-center">
+                                          ${diag.description}
+                                          <span class="badge badge-info badge-pill">${diag.nombre_seances} seance(s)</span>
+                                       </li-->
+                                          <li>
+                                             <span class="text"><p>${diag.description}</p></span>
+                                             <small class="label label-success"> ${diag.nombre_seances} seance(s) </small>
+                                             <div class="tools">
+                                                <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateDiag" onclick='updateDiag(${diag.id_diagnostic},"${diag.description}",${diag.nombre_seances});'></i>
+                                                <i class="fa fa-trash-o" onclick="deleteDiagnosticFunction(${diag.id_diagnostic},'${diag.description}');" ></i>
+                                             </div>
+                                          </li>
+                                       </c:forEach>
+                                    </c:if>
+                                 </ul>
+                              </div>
+                           </div><!-- /.row -->
+                        </div><!-- ./box-body -->
+                        <div class="box-footer">
+                           <div class="row">
+                              <div class="col-md-4"></div>
+                              <div class="col-md-4"></div>
+                              <div class="col-md-4"></div>
+                           </div>
+                        </div>
+                     </div>
+                     <%-- *************************************************************  --%>
+                        
                   </section>                     
                   <section class="col-lg-4 connectedSortable">                     
                   </section>  
@@ -336,6 +387,12 @@
                   </section>  
                </div>
                <!-- /.Empty Row -->
+               
+               <div class="row">
+                  <section class="col-lg-12">
+                     <div id='agenda'></div>
+                  </section>
+               </div>
                   
             </section>
             <!-- /.content -->
@@ -831,6 +888,16 @@
          <%-- .............................................. Add Agenda Modals ....................................................................................... --%>  
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
          <!--  Model Add Agenda  -->
+         <script>         
+            function setDate(){
+               var date_debut = document.getElementById("date_debut").value;               
+               document.getElementById("date_fin").value = date_debut; 
+            }
+            function setTime(){
+               var heure_debut = document.getElementById("heure_debut").value;               
+               document.getElementById("heure_fin").value = heure_debut; 
+            }
+         </script>
          <div class="modal fade" id="modalAddAgenda" role="dialog">
             <div class="modal-dialog">
                <!-- Form begin -->
@@ -850,7 +917,7 @@
                            <div class="row">
                               <div class="form-group">
                                  <label>Description</label>
-                                 <textarea required="true" class="form-control" name="description" placeholder="Description" rows="2">${agenda.description}</textarea>
+                                 <textarea class="form-control" name="description" placeholder="Description" rows="2">${agenda.description}</textarea>
                               </div>
                            </div>
                            <div class="row">
@@ -861,12 +928,12 @@
                            <div class="row">                              
                               <div class="form-group col-md-4">
                                  <label>Date</label>                                    
-                                 <input type="date" class="form-control pull-right" name="date_debut" />
+                                 <input type="date" class="form-control pull-right" name="date_debut" id="date_debut" oninput="setDate();" />
                               </div>
                               <div class="col-lg-2"></div>
                               <div class="form-group col-md-4">
                                  <label>Heure</label>
-                                 <input type="time" class="form-control pull-right" id="reservationtime" name="heure_debut" />                                    
+                                 <input type="time" class="form-control pull-right" id="heure_debut" name="heure_debut" oninput="setTime();" />                                    
                               </div>
                            </div>
                            <div class="row">
@@ -877,12 +944,12 @@
                            <div class="row">
                               <div class="form-group col-md-4">
                                  <label>Date</label>                                    
-                                 <input type="date" class="form-control pull-right" name="date_fin" />
+                                 <input type="date" class="form-control pull-right" name="date_fin" id="date_fin" />
                               </div>
                               <div class="col-lg-2"></div>
                               <div class="form-group col-md-4">
                                  <label>Heure</label>
-                                 <input type="time" class="form-control pull-right" id="reservationtime" name="heure_fin" />                                    
+                                 <input type="time" class="form-control pull-right" id="heure_fin" name="heure_fin" />                                    
                               </div>
                            </div>
                         </div>

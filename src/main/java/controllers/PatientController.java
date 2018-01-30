@@ -63,6 +63,7 @@ public class PatientController {
          ArrayList<Diagnostic> diagnostics = service.getDiagnostics(id_patient);
          ArrayList<Prescription> prescriptions = service.getPrescriptions(id_patient);
          ArrayList<Imagerie> imageries = service.getImageriesOfPatient(id_patient);
+         ArrayList<Agenda> agendas = service.getAgendasOfPatient(id_patient);
          
          ModelAndView mv = new ModelAndView();
          mv.setViewName("patient_dashboard");
@@ -73,6 +74,7 @@ public class PatientController {
          mv.addObject("prescriptions", prescriptions);
          mv.addObject("imageries", imageries);
          mv.addObject("HMs", HMs);
+         mv.addObject("agendas", agendas);
          
          return mv;
       }

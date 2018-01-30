@@ -70,5 +70,10 @@ public class AgendaController {
       params.addFlashAttribute("alertSuccess", "Création du rendez-vous.");
       return mv;
    }
+   
+   @RequestMapping("c")
+   public String calendar(){
+      return "c";
+   }
 
 }
