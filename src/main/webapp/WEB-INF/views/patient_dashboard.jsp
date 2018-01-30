@@ -30,12 +30,21 @@
                <div class="row">
                   
                   <section class="col-lg-4 connectedSortable">
-                     <!-- Patient info/update -->
+                     
+                     <%-- @@@@@@@@@@@@@@@@@@@@ Patient info/update @@@@@@@@@@@@@@@@@@@@@ --%>
                      <div class="box">               
                         <div class="box-header with-border">
                            <h3 class="box-title">Patient</h3>
                            <div class="box-tools pull-right">
                               <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <div class="btn-group">
+                                 <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
+                                 <ul class="dropdown-menu" role="menu">                           
+                                    <li><a data-toggle="modal" data-target="#modalAddAgenda"><i class="fa fa-fw fa-plus"></i> Nouveau endez-vous</a></li>
+                                    <li class="divider"></li>
+                                    <li><a href="#">Imprimer la liste</a></li>
+                                 </ul>
+                              </div>
                               <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                            </div>
                         </div><!-- /.box-header -->
@@ -86,11 +95,13 @@
                         <div class="box-footer">                     
                         </div>
                            
-                     </div><!-- /.box -->
+                     </div>
+                     <%-- *************************************************************  --%>
                   </section>
                      
                   <section class="col-lg-4 connectedSortable">
-                     <!-- Diagnostics  -->
+                     
+                     <%-- @@@@@@@@@@@@@@@@@@@@@@@@@ Diagnostic @@@@@@@@@@@@@@@@@@@@@@@@@ --%>
                      <div class="box">
                         <div class="box-header with-border">
                            <h3 class="box-title">Diagnostics <span class="badge badge-info badge-pill"> ${diagnostics.size()}</span></h3>
@@ -111,7 +122,7 @@
                         <div class="box-body">
                            <div class="row">
                               <div class="col-md-12">
-                                 <ul class="list-group">                     
+                                 <ul class="todo-list">                     
                                     <c:if test="${diagnostics.size() == 0}">
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
                                           <i>Aucun Diagnostic</i>
@@ -122,10 +133,18 @@
                                           <c:set var="diagnostics" value="${diagnostics.subList(0,5)}" />
                                        </c:if>
                                        <c:forEach items="${diagnostics}" var="diag">
-                                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                                             ${diag.description}
-                                             <span class="badge badge-info badge-pill">${diag.nombre_seances} seance(s)</span>
-                                          </li>  
+                                          <!--li class="list-group-item d-flex justify-content-between align-items-center">
+                                          ${diag.description}
+                                          <span class="badge badge-info badge-pill">${diag.nombre_seances} seance(s)</span>
+                                       </li-->
+                                          <li>
+                                             <span class="text"><p>${diag.description}</p></span>
+                                             <small class="label label-success"> ${diag.nombre_seances} seance(s) </small>
+                                             <div class="tools">
+                                                <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateDiag" onclick='updateDiag(${diag.id_diagnostic},"${diag.description}",${diag.nombre_seances});'></i>
+                                                <i class="fa fa-trash-o" onclick="deleteDiagnosticFunction(${diag.id_diagnostic},'${diag.description}');" ></i>
+                                             </div>
+                                          </li>
                                        </c:forEach>
                                     </c:if>
                                  </ul>
@@ -139,8 +158,10 @@
                               <div class="col-md-4"></div>
                            </div>
                         </div>
-                     </div><!-- /.box -->
-                     <!-- Historique Medical  -->
+                     </div>
+                     <%-- *************************************************************  --%>
+                        
+                     <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
                      <div class="box">
                         <div class="box-header with-border">
                            <h3 class="box-title">Historique médical <span class="badge badge-info badge-pill"> ${HMs.size()}</span></h3>
@@ -161,7 +182,7 @@
                         <div class="box-body">
                            <div class="row">
                               <div class="col-md-12">
-                                 <ul class="list-group">                     
+                                 <ul class="todo-list">                     
                                     <c:if test="${HMs.size() == 0}">
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
                                           <i>Aucun Historique médical</i>
@@ -172,10 +193,18 @@
                                           <c:set var="HMs" value="${HMs.subList(0,5)}" />
                                        </c:if>
                                        <c:forEach items="${HMs}" var="item">
-                                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                                             ${item.description}
-                                             <span class="badge">${item.date}</span>
-                                          </li>  
+                                          <!--li class="list-group-item d-flex justify-content-between align-items-center">
+                                          ${item.description}
+                                          <span class="badge">${item.date}</span>
+                                       </li-->
+                                          <li>
+                                             <span class="text"><p>${item.description}</p></span>
+                                             <small class="label label-success">${item.date}</small>
+                                             <div class="tools">
+                                                <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateHM" onclick='updateHM(${item.id_hm},"${item.description}","${item.date}");'></i>
+                                                <i class="fa fa-trash-o" onclick="deleteHMFunction(${item.id_hm},'${item.description}');" ></i>
+                                             </div>
+                                          </li>
                                        </c:forEach>
                                     </c:if>
                                  </ul>
@@ -190,11 +219,13 @@
                            </div>
                         </div>
                      </div>
-                     <!-- /.box HM -->
+                     <%-- *************************************************************  --%>
+                        
                   </section>
                      
                   <section class="col-lg-4 connectedSortable">
-                     <!-- Prescription  -->
+                     
+                     <%-- @@@@@@@@@@@@@@@@@@@@@@@@ Prescription @@@@@@@@@@@@@@@@@@@@@@@@ --%>                        
                      <div class="box">
                         <div class="box-header with-border">
                            <h3 class="box-title">Préscriptions <span class="badge badge-info badge-pill"> ${prescriptions.size()==null ? '0' : prescriptions.size()}</span></h3>
@@ -215,7 +246,7 @@
                         <div class="box-body">
                            <div class="row">
                               <div class="col-md-12">
-                                 <ul class="list-group">                     
+                                 <ul class="todo-list">                     
                                     <c:if test="${prescriptions == null || prescriptions.size() == 0 }">
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
                                           <i>Aucune préscription</i>
@@ -226,10 +257,14 @@
                                     </c:if>
                                     <c:if test="${prescriptions != null || prescriptions.size() != 0}">
                                        <c:forEach items="${prescriptions}" var="item">
-                                          <li class="list-group-item d-flex justify-content-between align-items-center">
-                                             ${item.description}
-                                             <span class="badge">${item.date}</span>
-                                          </li>  
+                                          <li>
+                                             <span class="text">${item.description}</span>
+                                             <small class="label label-success"> ${item.date} </small>
+                                             <div class="tools">
+                                                <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdatePrescription" onclick='updatePrescription(${item.id_prescription},"${item.description}","${item.date}");'></i>
+                                                <i class="fa fa-trash-o" onclick="deletePrescriptionFunction(${item.id_prescription},'${item.description}');" ></i>
+                                             </div>
+                                          </li> 
                                        </c:forEach>
                                     </c:if>
                                  </ul>
@@ -242,12 +277,11 @@
                               <div class="col-md-4"></div>
                               <div class="col-md-4"></div>
                            </div>
-                        </div>
-                           
-                           
-                     </div><!-- /.box -->  
+                        </div>                           
+                     </div>
+                     <%-- *************************************************************  --%>
                         
-                     <!-- Imagerie  -->
+                     <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@ Imagerie @@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
                      <div class="box">
                         <div class="box-header with-border">
                            <h3 class="box-title">Imagerie <span class="badge badge-info badge-pill"> ${imageries.size()}</span></h3>
@@ -286,7 +320,9 @@
                               <div class="col-md-4"></div>
                            </div>
                         </div>
-                     </div><!-- /.box -->   
+                     </div>
+                     <%-- *************************************************************  --%>
+                        
                   </section>
                </div>
                   
@@ -465,11 +501,9 @@
                   document.getElementById("formDeleteDiagnostic").submit();
                }
             }
-         </script>         
-            
+         </script>           
          <div class="modal fade" id="modalListDiag" role="dialog">
             <div class="modal-dialog">
-               
                <!-- Modal content-->
                <div class="modal-content">
                   <div class="modal-header">
@@ -479,26 +513,25 @@
                   <div class="modal-body">
                      <div class="row">
                         <div class="col-md-12">
-                           <ul class="todo-list">                                                               
+                           <ul class="todo-list">
                               <c:if test="${diagnostics.size() == 0}">
                                  <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <i>Aucun Diagnostic</i>
-                                 </li> 
+                                 </li>
                               </c:if>
                               <c:if test="${diagnostics.size() != 0}">                                 
                                  <c:forEach items="${diagnostics}" var="diag">                                    
                                     <li>
-                                       <span class="text">${diag.description}</span>
+                                       <span class="text"><p>${diag.description}</p></span>
                                        <small class="label label-info"> ${diag.nombre_seances} seance(s) </small>
                                        <div class="tools">
-                                          <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateDiag" onclick="updateDiag(${diag.id_diagnostic},'${diag.description}',${diag.nombre_seances});"></i>
+                                          <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateDiag" onclick='updateDiag(${diag.id_diagnostic},"${diag.description}",${diag.nombre_seances});'></i>
                                           <i class="fa fa-trash-o" onclick="deleteDiagnosticFunction(${diag.id_diagnostic},'${diag.description}');" ></i>
                                        </div>
                                     </li>                                       
                                  </c:forEach>
                               </c:if>
                            </ul>
-                              
                         </div>
                      </div>
                   </div>
@@ -526,8 +559,7 @@
                   document.getElementById("formDeleteHM").submit();
                }
             }
-         </script>         
-            
+         </script>
          <div class="modal fade" id="modalListHM" role="dialog">
             <div class="modal-dialog">
                
@@ -551,7 +583,7 @@
                                        <span class="text">${item.description}</span>
                                        <small class="label label-success"> ${item.date} </small>
                                        <div class="tools">
-                                          <i class="fa fa-edit"></i>
+                                          <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateHM" onclick='updateHM(${item.id_hm},"${item.description}","${item.date}");'></i>
                                           <i class="fa fa-trash-o" onclick="deleteHMFunction(${item.id_hm},'${item.description}');" ></i>
                                        </div>
                                     </li>                                       
@@ -586,8 +618,7 @@
                   document.getElementById("formDeletePrescription").submit();
                }
             }
-         </script>         
-            
+         </script>   
          <div class="modal fade" id="modalListPrescription" role="dialog">
             <div class="modal-dialog">
                
@@ -611,7 +642,7 @@
                                        <span class="text">${item.description}</span>
                                        <small class="label label-success"> ${item.date} </small>
                                        <div class="tools">
-                                          <i class="fa fa-edit"></i>
+                                          <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdatePrescription" onclick='updatePrescription(${item.id_prescription},"${item.description}","${item.date}");'></i>
                                           <i class="fa fa-trash-o" onclick="deletePrescriptionFunction(${item.id_prescription},'${item.description}');" ></i>
                                        </div>
                                     </li>                                       
@@ -628,7 +659,7 @@
                </div>
             </div>
          </div>
-         <!--  /.Model All HMs  -->  
+         <!--  /.Model All Prescription  -->  
             
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>  
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
@@ -638,13 +669,26 @@
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
             
          <!--  Model Update Diagnostic  -->
+         <script>         
+            function updateDiag(id_diagnostic, description,nombre_seances){
+               /*var tokens = description.split(/\n/);
+      var data = "";
+      for(var x = 0; x < tokens.length; x++){
+         data = data + tokens[x];
+      }*/
+               //alert("id: "+id_diagnostic+"\n desc: "+description+"\n nbre: "+nombre_seances);
+               document.getElementById("updateID_diagnostic").value = id_diagnostic;               
+               document.getElementById("updateDiagnombre_seances").value = nombre_seances;   
+               //var desc = description.replace("\\"," - ");
+               document.getElementById("updateDiagDescription").value = description;      
+            }
+         </script> 
          <div class="modal fade" id="modalUpdateDiag" role="dialog">
             <div class="modal-dialog">
                <!-- Form begin -->
-               <form method="POST" action="<%=request.getContextPath()%>/updateDiag">
+               <form method="POST" action="<%=request.getContextPath()%>/updateDiag/${patient.id_patient}">
                   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                  <input type="hidden" name="id_patient" value="${patient.id_patient}" />
-                  <input type="hidden" name="id_diagnostic" id="id_diagnostic" />
+                  <input type="hidden" name="id_diagnostic" id="updateID_diagnostic" />
                      
                   <!-- Modal content-->
                   <div class="modal-content">
@@ -657,11 +701,11 @@
                            <div class="col-md-12">
                               <div class="form-group">
                                  <label>Description</label>
-                                 <textarea required="true" class="form-control" name="description" id="updateDiagDescription" placeholder="Description" rows="2"  required="true">${diagnostic.description}</textarea>
+                                 <textarea required="true" class="form-control" name="description" id="updateDiagDescription" placeholder="Description" rows="2"  required="true"></textarea>
                               </div>
                               <div class="form-group col-md-4">
                                  <label>Nombre de séances</label>
-                                 <input type="number" class="form-control" name="nombre_seances" value="${diagnostic.nombre_seances}" id="updateDiagnombre_seances" required="true"/>
+                                 <input type="number" class="form-control" name="nombre_seances" id="updateDiagnombre_seances" required="true"/>
                               </div>
                            </div>
                         </div>
@@ -678,17 +722,187 @@
                </form>
             </div>
          </div>
+         <!--  /.Model update Diagnostic  -->
+            
+         <!-- .............................................................. -->
+            
+         <!--  Model Update HM  -->
          <script>         
-            function updateDiag(id_diagnostic, description,nombre_seances){                 
-               document.getElementById("id_diagnostic").value = id_diagnostic;
-               document.getElementById("updateDiagDescription").value = description;
-               document.getElementById("updateDiagnombre_seances").value = nombre_seances;         
+            function updateHM(id_hm, description,date){
+               document.getElementById("updateID_hm").value = id_hm;               
+               document.getElementById("updateHMDate").value = date;
+               document.getElementById("updateHMDescription").value = description;      
             }
          </script> 
-         <!--  /.Model update Diagnostic  -->    
+         <div class="modal fade" id="modalUpdateHM" role="dialog">
+            <div class="modal-dialog">
+               <!-- Form begin -->
+               <form method="POST" action="<%=request.getContextPath()%>/updateHM/${patient.id_patient}">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="id_hm" id="updateID_hm" />
+                     
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modification d'un element de l'historique medical</h4>
+                     </div>
+                     <div class="modal-body">
+                        <div class="row">
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label>Description</label>
+                                 <textarea required="true" class="form-control" name="description" id="updateHMDescription" placeholder="Description" rows="2"  required="true"></textarea>
+                              </div>
+                              <div class="form-group col-md-4">
+                                 <label>Date</label>
+                                 <input type="date" class="form-control" name="date" id="updateHMDate" required="true"/>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <div class="col-md-2">
+                           <div class="form-group">               
+                              <button type="submit" class="btn btn-primary">Modifier</button>  
+                           </div>  
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <!--  /.Model update HM  -->
+            
+         <!-- .............................................................. -->
+            
+         <!--  Model Update Prescription  -->
+         <script>         
+            function updatePrescription(id_prescription, description,date){
+               document.getElementById("updateID_prescription").value = id_prescription;               
+               document.getElementById("updatePrescriptionDate").value = date;
+               document.getElementById("updatePrescriptionDescription").value = description;      
+            }
+         </script> 
+         <div class="modal fade" id="modalUpdatePrescription" role="dialog">
+            <div class="modal-dialog">
+               <!-- Form begin -->
+               <form method="POST" action="<%=request.getContextPath()%>/updatePrescription/${patient.id_patient}">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="id_prescription" id="updateID_prescription" />
+                     
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modification da la préscription</h4>
+                     </div>
+                     <div class="modal-body">
+                        <div class="row">
+                           <div class="col-md-12">
+                              <div class="form-group">
+                                 <label>Description</label>
+                                 <textarea required="true" class="form-control" name="description" id="updatePrescriptionDescription" placeholder="Description" rows="2"  required="true"></textarea>
+                              </div>
+                              <div class="form-group col-md-4">
+                                 <label>Date</label>
+                                 <input type="date" class="form-control" name="date" id="updatePrescriptionDate" required="true"/>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <div class="col-md-2">
+                           <div class="form-group">               
+                              <button type="submit" class="btn btn-primary">Modifier</button>  
+                           </div>  
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <!--  /.Model update Prescription  -->
+            
             
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>  
+         <%-- .............................................. Add Agenda Modals ....................................................................................... --%>  
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
+         <!--  Model Add Agenda  -->
+         <div class="modal fade" id="modalAddAgenda" role="dialog">
+            <div class="modal-dialog">
+               <!-- Form begin -->
+               <form method="POST" action="<%=request.getContextPath()%>/addAgenda">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="form" value="patienDashboard" />
+                  <input type="hidden" name="id_patient" value="${patient.id_patient}" />
+                     
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Création d'un rendez-vous</h4>
+                     </div>
+                     <div class="modal-body">                        
+                        <div class="col-md-12">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label>Description</label>
+                                 <textarea required="true" class="form-control" name="description" placeholder="Description" rows="2">${agenda.description}</textarea>
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="col-lg-4"><hr></div>
+                              <div class="col-lg-4"><b>Date de début</b></div>
+                              <div class="col-lg-4"><hr></div>
+                           </div>
+                           <div class="row">                              
+                              <div class="form-group col-md-4">
+                                 <label>Date</label>                                    
+                                 <input type="date" class="form-control pull-right" name="date_debut" />
+                              </div>
+                              <div class="col-lg-2"></div>
+                              <div class="form-group col-md-4">
+                                 <label>Heure</label>
+                                 <input type="time" class="form-control pull-right" id="reservationtime" name="heure_debut" />                                    
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="col-lg-4"><hr></div>
+                              <div class="col-lg-4"><b>Date de fin</b></div>
+                              <div class="col-lg-4"><hr></div>
+                           </div>
+                           <div class="row">
+                              <div class="form-group col-md-4">
+                                 <label>Date</label>                                    
+                                 <input type="date" class="form-control pull-right" name="date_fin" />
+                              </div>
+                              <div class="col-lg-2"></div>
+                              <div class="form-group col-md-4">
+                                 <label>Heure</label>
+                                 <input type="time" class="form-control pull-right" id="reservationtime" name="heure_fin" />                                    
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <div class="col-md-2">
+                           <div class="form-group">               
+                              <button type="submit" class="btn btn-primary">Ajouter</button>  
+                           </div>  
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <!--  /.Model Add Agenda  -->     
+         <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>  
+         <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
+            
             
          <jsp:include page="layouts/footer.jsp" />
             

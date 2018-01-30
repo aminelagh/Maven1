@@ -17,7 +17,6 @@ import services.Service;
 import services.ServiceImpl;
 
 @Controller
-//@RequestMapping(value = "/patient")
 public class PatientController {
    
    ApplicationContext context;
@@ -37,10 +36,6 @@ public class PatientController {
          System.out.println(errorMessage);
       }
    }
-   
-   /*@RequestMapping(value={"/patient","/patient/index"}, method = RequestMethod.GET)
-   public ModelAndView test1(ModelMap model){return new ModelAndView("patient/index");}*/
-   
    
    //Liste des patients ********************************************************
    @RequestMapping(value={"/patients"}, method = RequestMethod.GET)
@@ -107,19 +102,22 @@ public class PatientController {
    
    //Submit Update Patient *****************************************************
    @RequestMapping(value={"/updatePatient"}, method = RequestMethod.POST)
-   public ModelAndView submitUpdatePatient(@ModelAttribute Patient patient, RedirectAttributes params){
+   public ModelAndView submitUpdatePatient(@ModelAttribute Patient patient, RedirectAttributes params, HttpServletRequest req){
       
       ModelAndView mv = new ModelAndView("redirect:/patient/"+patient.getId_patient()); //"redirect:"+patient.getId_patient());
       String errorMessage = "";
       boolean hasError = false;
+      int id_user = Integer.parseInt(req.getSession().getAttribute("id_user").toString());
       
       if(patient.getNom().length()==0){
          hasError = true;
          errorMessage += "<li>Veuillez saisir le nom du patient.</li>";
       }
       try{
-         if(!hasError)
+         if(!hasError){
+            patient.setId_user(id_user);
             service.updatePatient(patient);
+         }
       }catch(Exception e){
          //model.clear();
          hasError = true;

@@ -10,7 +10,7 @@
             
          <jsp:include page="layouts/menu_2.jsp" />
             
-         <!-- Right side column. Contains the navbar and content of the page -->
+            
          <div class="content-wrapper">
             <!-- Content Header (Page header) -->
             <section class="content-header">
@@ -93,7 +93,6 @@
                                     
                               </div>
                               <script>
-                                 
                                  function deletePatientFunction(id_patient,nom,prenom){
                                     var patient = nom+" "+prenom;
                                     var go = confirm("Vos êtes sur les points d'effacer le dossier du patient "+patient+".\n voulez-vous continuer?");
@@ -187,10 +186,11 @@
                      </div>
                      <!-- /.box -->
                         
-                  </section><!-- right col -->
-               </div><!-- /.row (main row) -->
+                  </section>
+               </div>
                   
-            </section><!-- /.content -->
+            </section>
+            <!-- /.content -->
          </div>
          <!-- /.content-wrapper -->
             

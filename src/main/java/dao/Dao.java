@@ -46,5 +46,14 @@ public interface Dao {
    public ResultSet getData(String query);
    public void execute(String query);
    
-   public int getNextID(String table_name);   
+   public int getNextID(String table_name);
+   
+   //Agenda -----------------
+   public void addAgenda(Agenda object);
+   public void updateAgenda(Agenda object);
+   public void deleteAgenda(int id);
+   public Agenda getAgenda(int id);
+   public ArrayList<Agenda> getAgendasOfUser(int id_user);
+   public ArrayList<Agenda> getAgendasOfPatient(int id_patient);
+   
 }

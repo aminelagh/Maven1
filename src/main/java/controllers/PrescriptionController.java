@@ -104,6 +104,39 @@ public class PrescriptionController {
       return "redirect:/patient/"+req.getParameter("id_patient");
    }
    
+   //Submit Update HM **********************************************************
+   @RequestMapping(value={"/updatePrescription/{id_patient}"}, method = RequestMethod.POST)
+   public ModelAndView submitUpdatePrescription(@ModelAttribute("id_patient") int id_patient, RedirectAttributes params, HttpServletRequest req){
+      ModelAndView mv = new ModelAndView("redirect:/patient/"+id_patient );
+      
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+      String created_at = sdf.format(new Date());
+      
+      Prescription object = new Prescription();
+      object.setId_prescription(Integer.parseInt(req.getParameter("id_prescription").toString()));
+      object.setId_patient(id_patient);
+      object.setDescription(req.getParameter("description"));
+      
+      try{
+         Date date = new Date();
+         date = sdf.parse(req.getParameter("date"));
+         object.setDate(date);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      try{
+         service.updatePrescription(object);
+      }catch(Exception e){
+         String errorMessage = "<li>Erreur de modification de la prescription.</li>";
+         errorMessage += "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage += "<li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+         return mv;
+      }
+      params.addFlashAttribute("alertSuccess", "Modification réussi.");
+      return mv;
+   }
+   
    //Delete Prescription *******************************************************
    @RequestMapping(value={"/deletePrescription"}, method = RequestMethod.POST)
    public ModelAndView deletePrescription(@ModelAttribute("id_prescription") int id_prescription, RedirectAttributes params, HttpServletRequest req){

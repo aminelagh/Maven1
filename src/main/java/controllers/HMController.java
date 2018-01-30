@@ -36,6 +36,7 @@ public class HMController {
       }
    }
    
+   //Add HM ********************************************************************
    @RequestMapping(value="/addHM", method = RequestMethod.POST)
    public ModelAndView submitAddDiagnosticPatientDashboard( RedirectAttributes params, HttpServletRequest req){
       System.out.println("================== submitAddHM ==================");
@@ -53,13 +54,6 @@ public class HMController {
       } catch (Exception e) {
          e.printStackTrace();
       }
-      
-      /*System.out.println("hm : "+hm.toString() );
-      System.out.println("id_patient : "+hm.getId_patient());
-      System.out.println("description : "+hm.getDescription());
-      System.out.println("date : "+hm.getDate());
-      System.out.println("date : "+req.getParameter("date"));
-      System.out.println("form : "+req.getParameter("form") );*/
       
       ModelAndView mv = new ModelAndView("redirect:/patient/"+hm.getId_patient());
       String errorMessage = "";
@@ -84,8 +78,42 @@ public class HMController {
       return mv;
    }
    
-   
-   //Delete HM *********************************************************
+   //Submit Update HM **********************************************************
+   @RequestMapping(value={"/updateHM/{id_patient}"}, method = RequestMethod.POST)
+   public ModelAndView submitUpdateHMg(@ModelAttribute("id_patient") int id_patient, RedirectAttributes params, HttpServletRequest req){
+      ModelAndView mv = new ModelAndView("redirect:/patient/"+id_patient );
+      
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
+      String created_at = sdf.format(new Date());
+      
+      Historique_medical object = new Historique_medical();
+      object.setId_hm(Integer.parseInt(req.getParameter("id_hm").toString()));
+      object.setId_patient(id_patient);
+      object.setDescription(req.getParameter("description"));
+      
+      try{
+         Date date = new Date();
+         date = sdf.parse(req.getParameter("date"));
+         object.setDate(date);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+      
+      System.out.println("===== "+object.toString());
+      try{
+         service.updateHistorique_medical(object);
+      }catch(Exception e){
+         String errorMessage = "<li>Erreur de modification del'historique medical.</li>";
+         errorMessage += "<li>Cause: "+e.getCause()+"</li>";
+         errorMessage += "<li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+         return mv;
+      }
+      params.addFlashAttribute("alertSuccess", "Modification réussi.");
+      return mv;
+   }
+      
+   //Delete HM *****************************************************************
    @RequestMapping(value={"/deleteHM"}, method = RequestMethod.POST)
    public ModelAndView deleteHM(@ModelAttribute("id_hm") int id_hm, RedirectAttributes params, HttpServletRequest req){
       int id_patient = 0;
@@ -99,49 +127,5 @@ public class HMController {
       }
       return new ModelAndView("redirect:patient/"+id_patient);
    }
-   
-   
-   /*
-   @RequestMapping(value="/patient/addHMs", method = RequestMethod.POST, params = {"form=patienDashboard"})
-   public ModelAndView submitAddDiagnosticPatientDashboard2(@ModelAttribute Historique_medical hm, RedirectAttributes params, HttpServletRequest req){
-   System.out.println("================== submitAddDiagnostic ==================");
-   //System.out.println("form : "+req.getParameter("form"));
-   SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd");
-   String created_at = sdf.format(new Date());
-   
-   System.out.println("hm : "+hm.toString() );
-   System.out.println("id_patient : "+hm.getId_patient());
-   System.out.println("description : "+hm.getDescription());
-   System.out.println("date : "+hm.getDate());
-   System.out.println("date : "+req.getParameter("date") );
-   System.out.println("formHM : "+req.getParameter("formHM") );
-   
-   ModelAndView mv = new ModelAndView("redirect:/patient/"+hm.getId_patient());
-   String errorMessage = "";
-   boolean hasError = false;
-   
-   try{
-   hm.setId_hm(service.getNextID("historique_medical"));
-   //service.addHistorique_medical(hm);
-   }catch(Exception e){
-   hasError = true;
-   errorMessage +=
-   "<li>Erreur de création du diagnostic.</li>"+
-   "<li>Cause: "+e.getCause()+
-   "</li>"+"<li>Message: "+e.getMessage()+"</li>";
-   }
-   if(hasError){
-   params.addFlashAttribute("alertWarning", errorMessage);
-   //mv.addObject("diag", diag);
-   }
-   else
-   params.addFlashAttribute("alertSuccess", "Création de l'historique médical réussi.");
-   return mv;
-   }
-   
-   */
-   
-   
-   
    
 }

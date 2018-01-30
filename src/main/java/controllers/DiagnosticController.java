@@ -69,35 +69,30 @@ public class DiagnosticController {
    }
    
    //Submit Update Diagnostic **************************************************
-   @RequestMapping(value={"/updateDiag"}, method = RequestMethod.POST)
-   public ModelAndView submitUpdateDiag(RedirectAttributes params, HttpServletRequest req){
-      System.out.println("***************");
-      
-      int id_patient = Integer.parseInt(req.getParameter("id_patient"));
-      ModelAndView mv = new ModelAndView("redirect:/patient/"+id_patient ); //"redirect:"+patient.getId_patient());
-      
+   @RequestMapping(value={"/updateDiag/{id_patient}"}, method = RequestMethod.POST)
+   public ModelAndView submitUpdateDiag(@ModelAttribute("id_patient") int id_patient, RedirectAttributes params, HttpServletRequest req){
+      ModelAndView mv = new ModelAndView("redirect:/patient/"+id_patient );
+            
+      System.out.println("=== "+req.getParameter("id_diagnostic"));
+      System.out.println("=== "+req.getParameter("nombre_seances"));
+      Diagnostic diag = new Diagnostic();
+      diag.setId_diagnostic(Integer.parseInt(req.getParameter("id_diagnostic").toString()));
+      diag.setId_patient(id_patient);
+      diag.setDescription(req.getParameter("description").toString());
+      diag.setNombre_seances(Integer.parseInt(req.getParameter("nombre_seances").toString()));      
+      System.out.println("===== "+diag.toString());
       try{
-         Diagnostic diag = new Diagnostic();
-         diag.setId_diagnostic(Integer.parseInt(req.getParameter("id_diagnostic")));
-         diag.setId_patient(Integer.parseInt(req.getParameter("id_patient")));
-         diag.setDescription(req.getParameter("description"));
-         diag.setNombre_seances(Integer.parseInt(req.getParameter("nombre_seances")));
-         
-         System.out.println(diag.toString());
-         
          service.updateDiagnostic(diag);
-         
       }catch(Exception e){
          String errorMessage = "<li>Erreur de modification du diagnostic.</li>";
          errorMessage += "<li>Cause: "+e.getCause()+"</li>";
          errorMessage += "<li>Message: "+e.getMessage()+"</li>";
          params.addFlashAttribute("alertDanger", errorMessage);
+         return mv;
       }
-      
       params.addFlashAttribute("alertSuccess", "Modification réussi.");
       return mv;
    }
-   
    
    //Delete Diagnostic *********************************************************
    @RequestMapping(value={"/deleteDiagnostic"}, method = RequestMethod.POST)
@@ -114,9 +109,5 @@ public class DiagnosticController {
       }
       return new ModelAndView("redirect:patient/"+id_patient);
    }
-   
-   
-   
-   
    
 }

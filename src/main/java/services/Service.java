@@ -52,4 +52,13 @@ public interface Service {
    public ArrayList<User> getUsers();
    
    public int getNextID(String table);
+   
+   //Agenda
+   public boolean addAgenda(Agenda object);
+   public boolean updateAgenda(Agenda object);
+   public boolean deleteAgenda(int id);
+   public Agenda getAgenda(int id);
+   public ArrayList<Agenda> getAgendasOfUser(int id_user);
+   public ArrayList<Agenda> getAgendasOfPatient(int id_patient);
+   
 }

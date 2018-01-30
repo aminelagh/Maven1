@@ -170,7 +170,7 @@ public class ServiceImpl implements Service{
       return dao.getImageriesOfPrescription(id);
    }
    
-    @Override
+   @Override
    public ArrayList<Imagerie> getImageriesOfPatient(int id_patient) {
       return dao.getImageriesOfPatient(id_patient);
    }
@@ -195,4 +195,34 @@ public class ServiceImpl implements Service{
       return dao.getNextID(table);
    }
    
+   //Agenda
+   @Override
+   public boolean addAgenda(Agenda object) {
+      dao.addAgenda(object);return true;
+   }
+   
+   @Override
+   public boolean updateAgenda(Agenda object) {
+      dao.updateAgenda(object);return true;
+   }
+   
+   @Override
+   public boolean deleteAgenda(int id) {
+      dao.deleteAgenda(id);return true;
+   }
+   
+   @Override
+   public Agenda getAgenda(int id) {
+      return dao.getAgenda(id);
+   }
+   
+   @Override
+   public ArrayList<Agenda> getAgendasOfUser(int id_user) {
+      return dao.getAgendasOfUser(id_user);
+   }
+   
+   @Override
+   public ArrayList<Agenda> getAgendasOfPatient(int id_patient) {
+      return dao.getAgendasOfPatient(id_patient);
+   }   
 }
