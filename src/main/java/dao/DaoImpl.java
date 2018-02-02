@@ -644,6 +644,7 @@ public class DaoImpl implements Dao{
             object.setHeure_fin(rs.getString("heure_fin"));
             object.setEtat(rs.getString("etat"));
             object.setCreated_at(rs.getDate("created_at"));
+            items.add(object);
          }
       }catch(Exception e){
          System.out.println("Erreur DaoImpl.getAgendasOfUser(): "+e.getCause()+" \n "+e.getMessage());
@@ -670,6 +671,7 @@ public class DaoImpl implements Dao{
             object.setHeure_fin(rs.getString("heure_fin"));
             object.setEtat(rs.getString("etat"));
             object.setCreated_at(rs.getDate("created_at"));
+            items.add(object);
          }
       }catch(Exception e){
          System.out.println("Erreur DaoImpl.getAgendasOfPatient(): "+e.getCause()+" \n "+e.getMessage());

@@ -1,21 +1,24 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html>
    <head>
       <meta charset='utf-8' />
-
-      
-      <!-- Full Calendar -->
-      <script src="<c:url value="/resources/fullCalendar/fullcalendar.min.css" />"></script>
-      <script src="<c:url value="/resources/fullCalendar/fullcalendar.print.min.css" />"></script>
+      <title>Calendar</title>
+         
+      <link href="<c:url value="/resources/fullCalendar/fullcalendar.min.css" />" rel='stylesheet' />
+         
       <!-- jQuery 2.1.3 -->
       <script src="<c:url value="/resources/plugins/jQuery/jQuery-2.1.3.min.js" />"></script>
-      <script src="<c:url value="/resources/fullCalendar/moment.min.js" />"></script>
+         
+      <script src="<c:url value="/resources/fullCalendar/moment.min.js" />"></script>     
+         
       <script src="<c:url value="/resources/fullCalendar/fullcalendar.min.js" />"></script>
       <script src="<c:url value="/resources/fullCalendar/locale-all.js" />"></script>
-      
+         
       <script>      
          $(document).ready(function() {         
-            $('#agenda').fullCalendar({
+            $('#calendar').fullCalendar({
                locale: 'fr',            
                header: {
                   left: 'prev,next today',
@@ -52,11 +55,26 @@
             });         
          });      
       </script> 
-      
+         
    </head>
    <body>
       
-      <div id='agenda'></div>
-      
+      <div id='calendar'></div>
+         
+      <hr>
+         
    </body>
 </html>
+   
+<!--
+   
+      <script src="<c:url value="/resources/fullCalendar/fullcalendar.min.css" />"></script>
+      <script src="<c:url value="/resources/fullCalendar/fullcalendar.print.min.css" />"></script>
+<!-- jQuery 2.1.3 --
+<script src="<c:url value="/resources/fullCalendar/jquery.min.js" />"></script>
+<script src="<c:url value="/resources/fullCalendar/moment.min.js" />"></script>
+<script src="<c:url value="/resources/fullCalendar/fullcalendar.min.js" />"></script>
+<script src="<c:url value="/resources/fullCalendar/locale-all.js" />"></script>
+   
+   
+-->

@@ -1,8 +1,9 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
    <jsp:include page="layouts/header.jsp" />
-   
+      
    <body class="skin-blue">
       <div class="wrapper">
          
@@ -54,8 +55,8 @@
                                        <small id="emailHelp" class="form-text text-muted">required</small>
                                     </div>              
                                     <div class="form-group">
-                                       <label>Prénom</label>
-                                       <input type="text" class="form-control" id="prenom" name="prenom" placeholder="Prénom" value="${patient.prenom}" />
+                                       <label>PrÃ©nom</label>
+                                       <input type="text" class="form-control" id="prenom" name="prenom" placeholder="PrÃ©nom" value="${patient.prenom}" />
                                     </div>  
                                     <div class="form-group">
                                        <label>Date de naissance</label>
@@ -85,8 +86,7 @@
                            </div><!-- /.row -->
                         </div><!-- ./box-body -->
                         <div class="box-footer">                     
-                        </div>
-                           
+                        </div>                           
                      </div>
                      <%-- *************************************************************  --%>
                   </section>
@@ -102,7 +102,7 @@
                               <div class="btn-group">
                                  <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
                                  <ul class="dropdown-menu" role="menu">                           
-                                    <li><a data-toggle="modal" data-target="#modalAddDiag"><i class="fa fa-fw fa-plus"></i> Créer un diagnostic</a></li>
+                                    <li><a data-toggle="modal" data-target="#modalAddDiag"><i class="fa fa-fw fa-plus"></i> CrÃ©er un diagnostic</a></li>
                                     <li><a data-toggle="modal" data-target="#modalListDiag"><i class="fa fa-fw fa-bars"></i> Tous les diagnostics</a></li>
                                     <li class="divider"></li>
                                     <li><a href="#">Imprimer la liste</a></li>
@@ -156,7 +156,7 @@
                      <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HM @@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
                      <div class="box">
                         <div class="box-header with-border">
-                           <h3 class="box-title">Historique médical <span class="badge badge-info badge-pill"> ${HMs.size()}</span></h3>
+                           <h3 class="box-title">Historique mÃ©dical <span class="badge badge-info badge-pill"> ${HMs.size()}</span></h3>
                            <div class="box-tools pull-right">
                               <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                               <div class="btn-group">
@@ -177,7 +177,7 @@
                                  <ul class="todo-list">                     
                                     <c:if test="${HMs.size() == 0}">
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          <i>Aucun Historique médical</i>
+                                          <i>Aucun Historique mÃ©dical</i>
                                        </li> 
                                     </c:if>
                                     <c:if test="${HMs.size() != 0}">
@@ -220,14 +220,14 @@
                      <%-- @@@@@@@@@@@@@@@@@@@@@@@@ Prescription @@@@@@@@@@@@@@@@@@@@@@@@ --%>                        
                      <div class="box">
                         <div class="box-header with-border">
-                           <h3 class="box-title">Préscriptions <span class="badge badge-info badge-pill"> ${prescriptions.size()==null ? '0' : prescriptions.size()}</span></h3>
+                           <h3 class="box-title">PrÃ©scriptions <span class="badge badge-info badge-pill"> ${prescriptions.size()==null ? '0' : prescriptions.size()}</span></h3>
                            <div class="box-tools pull-right">
                               <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
                               <div class="btn-group">
                                  <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
                                  <ul class="dropdown-menu" role="menu">
                                     <li><a data-toggle="modal" data-target="#modelAddPrescription"><i class="fa fa-fw fa-plus"></i> Ajouter</a></li>                                    
-                                    <li><a data-toggle="modal" data-target="#modalListPrescription"><i class="fa fa-fw fa-bars"></i> Préscriptions</a></li>
+                                    <li><a data-toggle="modal" data-target="#modalListPrescription"><i class="fa fa-fw fa-bars"></i> PrÃ©scriptions</a></li>
                                     <li class="divider"></li>
                                     <li><a href="#">Imprimer la liste</a></li>
                                  </ul>
@@ -241,7 +241,7 @@
                                  <ul class="todo-list">                     
                                     <c:if test="${prescriptions == null || prescriptions.size() == 0 }">
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          <i>Aucune préscription</i>
+                                          <i>Aucune prÃ©scription</i>
                                        </li> 
                                     </c:if>
                                     <c:if test="${prescriptions.size() > 5}"> 
@@ -320,7 +320,7 @@
                   
                <!-- Empty Row -->
                <div class="row">
-                  <section class="col-lg-6 connectedSortable">
+                  <section class="col-lg-12 connectedSortable">
                      <%-- @@@@@@@@@@@@@@@@@@@@@@@@@ Agenda @@@@@@@@@@@@@@@@@@@@@@@@@ --%>
                      <div class="box">
                         <div class="box-header with-border">
@@ -342,57 +342,66 @@
                            <div class="row">
                               <div class="col-md-12">
                                  <ul class="todo-list">                     
-                                    <c:if test="${diagnostics.size() == 0}">
+                                    <c:if test="${agendas.size() == 0}">
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                                          <i>Aucun Diagnostic</i>
+                                          <i>Aucun rendez-vous</i>
                                        </li> 
                                     </c:if>
-                                    <c:if test="${diagnostics.size() != 0}">
-                                       <c:if test="${diagnostics.size() > 5}"> 
-                                          <c:set var="diagnostics" value="${diagnostics.subList(0,5)}" />
-                                       </c:if>
-                                       <c:forEach items="${diagnostics}" var="diag">
-                                          <!--li class="list-group-item d-flex justify-content-between align-items-center">
-                                          ${diag.description}
-                                          <span class="badge badge-info badge-pill">${diag.nombre_seances} seance(s)</span>
-                                       </li-->
-                                          <li>
-                                             <span class="text"><p>${diag.description}</p></span>
-                                             <small class="label label-success"> ${diag.nombre_seances} seance(s) </small>
-                                             <div class="tools">
-                                                <i class="fa fa-edit" data-toggle="modal" data-target="#modalUpdateDiag" onclick='updateDiag(${diag.id_diagnostic},"${diag.description}",${diag.nombre_seances});'></i>
-                                                <i class="fa fa-trash-o" onclick="deleteDiagnosticFunction(${diag.id_diagnostic},'${diag.description}');" ></i>
-                                             </div>
-                                          </li>
-                                       </c:forEach>
-                                    </c:if>
+                                       
                                  </ul>
                               </div>
                            </div><!-- /.row -->
                         </div><!-- ./box-body -->
                         <div class="box-footer">
                            <div class="row">
-                              <div class="col-md-4"></div>
-                              <div class="col-md-4"></div>
-                              <div class="col-md-4"></div>
+                              <script>      
+                                 $(document).ready(function() {         
+                                    $('#agenda').fullCalendar({
+                                       locale: 'fr',            
+                                       header: {
+                                          left: 'prev,next today',
+                                          center: 'title',
+                                          right: 'listDay,listWeek,listMonth, month'
+                                       },            
+                                       // customize the button names,
+                                       // otherwise they'd all just say "list"
+                                       views: {
+                                          listDay: { buttonText: 'JournÃ©e' },
+                                          listWeek: { buttonText: 'Semaine' },
+                                          listMonth: { buttonText: 'Mois' }
+                                       },            
+                                       defaultView: 'listWeek',
+                                       //defaultDate: '2017-12-12',
+                                       navLinks: true, // can click day/week names to navigate views
+                                       editable: false,
+                                       eventLimit: true, // allow "more" link when too many events
+                                       events: [
+                                 <c:if test="${agendas.size() != 0}">
+                                    <c:forEach items="${agendas}" var="item">
+                                                {
+                                                   id: ${item.id_agenda},
+                                                   title: '${item.description}',
+                                                   start: '${item.date_debut}T${item.heure_debut}',
+                                                   end: '${item.date_fin}T${item.heure_fin}',                                                   
+                                                },   
+                                    </c:forEach>
+                                 </c:if>
+                                          ]
+                                       });         
+                                    });      
+                              </script> 
+                              <div class="col-md-12"><div id="agenda"></div></div>
                            </div>
                         </div>
                      </div>
-                     <%-- *************************************************************  --%>
-                        
+                     <%-- *************************************************************  --%>                     
                   </section>                     
-                  <section class="col-lg-4 connectedSortable">                     
-                  </section>  
-                  <section class="col-lg-4 connectedSortable">                     
-                  </section>  
+                  <section class="col-lg-6 connectedSortable">
+                     
+                  </section>     
                </div>
                <!-- /.Empty Row -->
-               
-               <div class="row">
-                  <section class="col-lg-12">
-                     <div id='agenda'></div>
-                  </section>
-               </div>
+                  
                   
             </section>
             <!-- /.content -->
@@ -416,7 +425,7 @@
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Création d'un diagnostic</h4>
+                        <h4 class="modal-title">CrÃ©ation d'un diagnostic</h4>
                      </div>
                      <div class="modal-body">
                         <div class="row">
@@ -426,7 +435,7 @@
                                  <textarea required="true" class="form-control" name="description" placeholder="Description" rows="2">${diagnostic.description}</textarea>
                               </div>
                               <div class="form-group col-md-4">
-                                 <label>Nombre de séances</label>
+                                 <label>Nombre de sÃ©ances</label>
                                  <input type="number" class="form-control" name="nombre_seances" value="${diagnostic.nombre_seances}" required="true"/>
                               </div>
                            </div>
@@ -459,7 +468,7 @@
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Création d'un diagnostic</h4>
+                        <h4 class="modal-title">CrÃ©ation d'un diagnostic</h4>
                      </div>
                      <div class="modal-body">
                         <div class="row">
@@ -502,7 +511,7 @@
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Création d'une préscription</h4>
+                        <h4 class="modal-title">CrÃ©ation d'une prÃ©scription</h4>
                      </div>
                      <div class="modal-body">
                         <div class="row">
@@ -552,7 +561,7 @@
          </form>   
          <script>         
             function deleteDiagnosticFunction(id_diag, description){
-               var go = confirm('Vos êtes sur les points d\'effacer le diagnostic "'+description+'".\n voulez-vous continuer?');
+               var go = confirm('Vos Ãªtes sur les points d\'effacer le diagnostic "'+description+'".\n voulez-vous continuer?');
                if(go){                  
                   document.getElementById("id_diagnostic").value = id_diag;
                   document.getElementById("formDeleteDiagnostic").submit();
@@ -610,7 +619,7 @@
          </form>   
          <script>         
             function deleteHMFunction(id_hm, description){
-               var go = confirm('Vos êtes sur les points d\'effacer l\'element: "'+description+'".\n voulez-vous continuer?');
+               var go = confirm('Vos Ãªtes sur les points d\'effacer l\'element: "'+description+'".\n voulez-vous continuer?');
                if(go){                  
                   document.getElementById("id_hm").value = id_hm;
                   document.getElementById("formDeleteHM").submit();
@@ -623,7 +632,7 @@
                <div class="modal-content">
                   <div class="modal-header">
                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                     <h4 class="modal-title">Historique Médical</h4>
+                     <h4 class="modal-title">Historique MÃ©dical</h4>
                   </div>
                   <div class="modal-body">
                      <div class="row">
@@ -669,7 +678,7 @@
          </form>   
          <script>         
             function deletePrescriptionFunction(id_prescription, description){
-               var go = confirm('Vos êtes sur les points d\'effacer l\'element: "'+description+'".\n voulez-vous continuer?');
+               var go = confirm('Vos Ãªtes sur les points d\'effacer l\'element: "'+description+'".\n voulez-vous continuer?');
                if(go){                  
                   document.getElementById("id_prescription").value = id_prescription;
                   document.getElementById("formDeletePrescription").submit();
@@ -761,7 +770,7 @@
                                  <textarea required="true" class="form-control" name="description" id="updateDiagDescription" placeholder="Description" rows="2"  required="true"></textarea>
                               </div>
                               <div class="form-group col-md-4">
-                                 <label>Nombre de séances</label>
+                                 <label>Nombre de sÃ©ances</label>
                                  <input type="number" class="form-control" name="nombre_seances" id="updateDiagnombre_seances" required="true"/>
                               </div>
                            </div>
@@ -853,7 +862,7 @@
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Modification da la préscription</h4>
+                        <h4 class="modal-title">Modification da la prÃ©scription</h4>
                      </div>
                      <div class="modal-body">
                         <div class="row">
@@ -910,7 +919,7 @@
                   <div class="modal-content">
                      <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Création d'un rendez-vous</h4>
+                        <h4 class="modal-title">CrÃ©ation d'un rendez-vous</h4>
                      </div>
                      <div class="modal-body">                        
                         <div class="col-md-12">
@@ -922,7 +931,7 @@
                            </div>
                            <div class="row">
                               <div class="col-lg-4"><hr></div>
-                              <div class="col-lg-4"><b>Date de début</b></div>
+                              <div class="col-lg-4"><b>Date de dÃ©but</b></div>
                               <div class="col-lg-4"><hr></div>
                            </div>
                            <div class="row">                              
