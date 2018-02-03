@@ -125,10 +125,6 @@
                                           <c:set var="diagnostics" value="${diagnostics.subList(0,5)}" />
                                        </c:if>
                                        <c:forEach items="${diagnostics}" var="diag">
-                                          <!--li class="list-group-item d-flex justify-content-between align-items-center">
-                                          ${diag.description}
-                                          <span class="badge badge-info badge-pill">${diag.nombre_seances} seance(s)</span>
-                                       </li-->
                                           <li>
                                              <span class="text"><p>${diag.description}</p></span>
                                              <small class="label label-success"> ${diag.nombre_seances} seance(s) </small>
@@ -318,7 +314,7 @@
                   </section>
                </div>
                   
-               <!-- Empty Row -->
+                  
                <div class="row">
                   <section class="col-lg-12 connectedSortable">
                      <%-- @@@@@@@@@@@@@@@@@@@@@@@@@ Agenda @@@@@@@@@@@@@@@@@@@@@@@@@ --%>
@@ -330,7 +326,7 @@
                               <div class="btn-group">
                                  <button class="btn btn-box-tool dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i></button>
                                  <ul class="dropdown-menu" role="menu">                           
-                                    <li><a data-toggle="modal" data-target="#modalAddAgenda"><i class="fa fa-fw fa-plus"></i> Nouveau endez-vous</a></li>
+                                    <li><a data-toggle="modal" data-target="#modalAddAgenda"><i class="fa fa-fw fa-plus"></i> Nouveau rendez-vous</a></li>
                                     <li class="divider"></li>
                                     <li><a href="#">Imprimer la liste</a></li>
                                  </ul>
@@ -346,8 +342,7 @@
                                        <li class="list-group-item d-flex justify-content-between align-items-center">
                                           <i>Aucun rendez-vous</i>
                                        </li> 
-                                    </c:if>
-                                       
+                                    </c:if>                                       
                                  </ul>
                               </div>
                            </div><!-- /.row -->
@@ -362,15 +357,13 @@
                                           left: 'prev,next today',
                                           center: 'title',
                                           right: 'listDay,listWeek,listMonth, month'
-                                       },            
-                                       // customize the button names,
-                                       // otherwise they'd all just say "list"
+                                       },
                                        views: {
                                           listDay: { buttonText: 'Journée' },
                                           listWeek: { buttonText: 'Semaine' },
                                           listMonth: { buttonText: 'Mois' }
                                        },            
-                                       defaultView: 'listWeek',
+                                       //defaultView: 'listWeek',
                                        //defaultDate: '2017-12-12',
                                        navLinks: true, // can click day/week names to navigate views
                                        editable: false,
@@ -379,14 +372,29 @@
                                  <c:if test="${agendas.size() != 0}">
                                     <c:forEach items="${agendas}" var="item">
                                                 {
-                                                   id: ${item.id_agenda},
-                                                   title: '${item.description}',
-                                                   start: '${item.date_debut}T${item.heure_debut}',
-                                                   end: '${item.date_fin}T${item.heure_fin}',                                                   
+                                                   id:             ${item.id_agenda},
+                                                   title:         '${item.description}',
+                                                   start:         '${item.date_debut}T${item.heure_debut}',                                                   
+                                                   end:           '${item.date_fin}T${item.heure_fin}',
+                                                   
+                                                   description:   '${item.description}',
+                                                   date_debut:    '${item.date_debut}',
+                                                   heure_debut:   '${item.heure_debut}',
+                                                   date_fin:      '${item.date_fin}',
+                                                   heure_fin:     '${item.heure_fin}',
+                                                   etat:          '${item.etat}',
                                                 },   
                                     </c:forEach>
                                  </c:if>
-                                          ]
+                                          ],                                          
+                                          //On event Click
+                                          eventClick: function(event, jsEvent, view) {
+                                             
+                                             fillUpdateAgendaForm(event.id,''+event.description+'',''+event.date_debut+'',''+event.heure_debut+'',''+event.date_fin+'',''+event.heure_fin+'',''+event.etat+'');
+                                             $("#modalUpdateAgenda").modal();
+                                             //alert("id: "+event.id +"\n date_debut "+event.date_debut+"\n start: "+event.start);
+                                             $(this).css('border-color', 'red');                                             
+                                          }
                                        });         
                                     });      
                               </script> 
@@ -396,6 +404,7 @@
                      </div>
                      <%-- *************************************************************  --%>                     
                   </section>                     
+                  
                   <section class="col-lg-6 connectedSortable">
                      
                   </section>     
@@ -894,7 +903,7 @@
             
             
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>  
-         <%-- .............................................. Add Agenda Modals ....................................................................................... --%>  
+         <%-- .............................................. Agenda Modals ....................................................................................... --%>  
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
          <!--  Model Add Agenda  -->
          <script>         
@@ -975,7 +984,105 @@
                </form>
             </div>
          </div>
-         <!--  /.Model Add Agenda  -->     
+         <!--  /.Model Add Agenda  -->
+            
+         <%-- ************************************************************* --%>
+            
+         <!--  Model Add Agenda  -->
+         <script>
+            function fillUpdateAgendaForm(id,description,date_debut,heure_debut,date_fin,heure_fin,etat){
+               document.getElementById("rdv_id_agenda").value = id;
+               document.getElementById("rdv_description").value = description;
+               document.getElementById("rdv_date_debut").value = date_debut;
+               document.getElementById("rdv_heure_debut").value = heure_debut;
+               document.getElementById("rdv_date_fin").value = date_fin;
+               document.getElementById("rdv_heure_fin").value = heure_fin;
+               //document.getElementById("rdv_etat").value = etat; 
+            }
+         </script>
+         <div class="modal fade" id="modalUpdateAgenda" role="dialog">
+            <div class="modal-dialog">
+               <!-- Form begin -->
+               <form method="POST" action="<%=request.getContextPath()%>/updateAgenda/${patient.id_patient}">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="form" value="patienDashboard" />
+                  <input type="hidden" name="id_agenda" id="rdv_id_agenda" />
+                     
+                  <!-- Modal content-->
+                  <div class="modal-content">
+                     <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Modification d'un rendez-vous</h4>
+                     </div>
+                     <div class="modal-body">                        
+                        <div class="col-md-12">
+                           <div class="row">
+                              <div class="form-group">
+                                 <label>Description</label>
+                                 <textarea class="form-control" name="description" id="rdv_description" placeholder="Description" rows="2"><div id="rdv_description"></div></textarea>
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="col-lg-4"><hr></div>
+                              <div class="col-lg-4"><b>Date de début</b></div>
+                              <div class="col-lg-4"><hr></div>
+                           </div>
+                           <div class="row">                              
+                              <div class="form-group col-md-4">
+                                 <label>Date</label>                                    
+                                 <input type="date" class="form-control pull-right" name="date_debut" id="rdv_date_debut" />
+                              </div>
+                              <div class="col-lg-2"></div>
+                              <div class="form-group col-md-4">
+                                 <label>Heure</label>
+                                 <input type="time" class="form-control pull-right" id="rdv_heure_debut" name="heure_debut"/>                                    
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="col-lg-4"><hr></div>
+                              <div class="col-lg-4"><b>Date de fin</b></div>
+                              <div class="col-lg-4"><hr></div>
+                           </div>
+                           <div class="row">
+                              <div class="form-group col-md-4">
+                                 <label>Date</label>                                    
+                                 <input type="date" class="form-control pull-right" name="date_fin" id="rdv_date_fin" />
+                              </div>
+                              <div class="col-lg-2"></div>
+                              <div class="form-group col-md-4">
+                                 <label>Heure</label>
+                                 <input type="time" class="form-control pull-right" id="rdv_heure_fin" name="heure_fin" />                                    
+                              </div>
+                           </div>
+                           <div class="row">
+                              <div class="col-lg-2"></div>
+                              <div class="col-lg-4">
+                                 <div class="form-group">
+                                    <label>Etat</label>
+                                    <select class="form-control" name="etat">
+                                       <option value="nouveau">Nouveau</option>
+                                       <option value="annulee">Annulée</option>
+                                       <option value="autre">Autre</option>
+                                    </select>
+                                 </div>                                 
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="modal-footer">
+                        <div class="col-md-2">
+                           <div class="form-group">               
+                              <button type="submit" class="btn btn-primary">Modifier</button>  
+                           </div>  
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                     </div>
+                  </div>
+               </form>
+            </div>
+         </div>
+         <!--  /.Model update Agenda  -->    
+            
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>  
          <%-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ --%>
             

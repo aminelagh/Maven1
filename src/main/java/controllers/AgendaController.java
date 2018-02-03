@@ -1,12 +1,14 @@
 package controllers;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import models.*;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,7 +54,7 @@ public class AgendaController {
       object.setDate_fin(req.getParameter("date_fin"));
       object.setHeure_debut(req.getParameter("heure_debut"));
       object.setHeure_fin(req.getParameter("heure_fin"));
-            
+      
       ModelAndView mv = new ModelAndView("redirect:/patient/"+object.getId_patient());
       String errorMessage = "";
       
@@ -71,9 +73,55 @@ public class AgendaController {
       return mv;
    }
    
+   //Submit Update Agenda ******************************************************
+   @RequestMapping(value={"/updateAgenda/{id_patient}"}, method = RequestMethod.POST)
+   public ModelAndView submitUpdateHMg(@ModelAttribute("id_patient") int id_patient, RedirectAttributes params, HttpServletRequest req){
+      ModelAndView mv = new ModelAndView("redirect:/patient/"+id_patient );
+      
+      Agenda object = new Agenda();
+      object.setId_agenda(Integer.parseInt(req.getParameter("id_agenda")));
+      object.setId_user(Integer.parseInt(req.getSession().getAttribute("id_user").toString()));
+      object.setId_patient(id_patient);
+      object.setDescription(req.getParameter("description"));
+      object.setEtat(req.getParameter("etat"));
+      
+      object.setDate_debut(req.getParameter("date_debut"));
+      object.setDate_fin(req.getParameter("date_fin"));
+      object.setHeure_debut(req.getParameter("heure_debut"));
+      object.setHeure_fin(req.getParameter("heure_fin"));
+      
+      try{
+         service.updateAgenda(object);
+      }catch(Exception e){
+         String errorMessage = "<li>Erreur de modification du rendez-vous.</li>"
+                 + "<li>Cause: "+e.getCause()+"</li>"
+                 + "<li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+         return mv;
+      }
+      params.addFlashAttribute("alertSuccess", "Modification réussi.");
+      //params.addFlashAttribute("alertSuccess", "+ "+object.toString());
+      return mv;
+   }
+   
+   //Mes rdv *******************************************************************
+   @RequestMapping(value={"/agenda"}, method = RequestMethod.GET)
+   public ModelAndView mesRDV(ModelMap model, HttpServletRequest req){
+      int id_user = Integer.parseInt(req.getSession().getAttribute("id_user").toString());
+      ArrayList<Agenda> agendas = service.getAgendasOfUser(id_user);
+      ArrayList<Patient> patients = service.getPatients(id_user);
+      
+      model.addAttribute("pageTitle", "Mon agenda");
+      model.addAttribute("agendas", agendas);
+      model.addAttribute("patients", patients);
+      return new ModelAndView("user_agenda");
+   }
+   
+   
+   
    @RequestMapping("c")
    public String calendar(){
       return "c";
    }
-
+   
 }

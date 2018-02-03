@@ -582,14 +582,13 @@ public class DaoImpl implements Dao{
    @Override
    public void updateAgenda(Agenda object) {
       String query = "UPDATE agenda SET id_user="+object.getId_user()+", "
-              + "id_user="+object.getId_user()+", "
               + "id_patient="+object.getId_patient()+", "
               + "description='"+object.getDescription()+"', "
               + "date_debut='"+object.getDate_debut()+"', "
               + "heure_debut='"+object.getHeure_debut()+"', "
               + "date_fin='"+object.getDate_fin()+"', "
-              + "heur_fin='"+object.getDate_fin()+"', "
-              + "etat='"+object.getEtat()+"', "
+              + "heure_fin='"+object.getHeure_fin()+"', "
+              + "etat='"+object.getEtat()+"' "
               + "WHERE id_agenda="+object.getId_agenda()+" ; ";
       jdbc.execute(query);}
    

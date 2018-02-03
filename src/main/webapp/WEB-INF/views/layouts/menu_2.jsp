@@ -43,7 +43,7 @@
          <li><a href="<%=request.getContextPath()%>/patients"><i class="fa fa-book"></i> Mes patients</a></li>
          
          
-         <li><a href=""><i class="fa fa-book"></i> Mes rendez-vous</a></li>
+         <li><a href="<%=request.getContextPath()%>/agenda"><i class="fa fa-book"></i> Mes rendez-vous</a></li>
          <li class="header">Alerts</li>
          <li><a href="#"><i class="fa fa-circle-o text-danger"></i> Important</a></li>
          <li><a href="#"><i class="fa fa-circle-o text-warning"></i> Warning</a></li>
