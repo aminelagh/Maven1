@@ -61,6 +61,26 @@
                         <div class="box-footer">
                            <div class="row">
                               <script>      
+                                 function getColor(id_patient)
+                                 {
+                                    switch(id_patient){
+                                       case 0: return '#237DC8';break;
+                                       case 1: return '#322075';break;
+                                       case 2: return '#5FB04D';break;
+                                       case 3: return '#84403E';break;
+                                       case 4: return '#9D2772';break;
+                                       case 5: return '#739480';break;
+                                       case 6: return '#8B8346';break;
+                                       case 7: return '#2D205E';break;
+                                       case 8: return '#463C6A';break;
+                                       case 9: return '#F4D80A';break;
+                                       case 10: return '#10CF5D';break;
+                                       case 11: return '#C590B2';break;
+                                       case 12: return '#D40E07';break;
+                                       default : return '#000000'; break;
+                                    }
+                                 }
+                                 
                                  $(document).ready(function() {         
                                     $('#agenda').fullCalendar({
                                        locale: 'fr',            
@@ -79,6 +99,7 @@
                                        navLinks: true, // can click day/week names to navigate views
                                        editable: false,
                                        eventLimit: true, // allow "more" link when too many events
+                                       displayEventTime : true,
                                        events: [
                                  <c:if test="${agendas.size() != 0}">
                                     <c:forEach items="${agendas}" var="item">
@@ -94,6 +115,7 @@
                                                    date_fin:      '${item.date_fin}',
                                                    heure_fin:     '${item.heure_fin}',
                                                    etat:          '${item.etat}',
+                                                   color: ''+getColor(${item.id_patient})+'',
                                                 },   
                                     </c:forEach>
                                  </c:if>
@@ -144,7 +166,6 @@
                <form method="POST" action="<%=request.getContextPath()%>/addAgenda">
                   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                   <input type="hidden" name="form" value="agenda" />
-                  <input type="hidden" name="id_patient" value="${patient.id_patient}" />
                      
                   <!-- Modal content-->
                   <div class="modal-content">
@@ -152,12 +173,24 @@
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
                         <h4 class="modal-title">Création d'un rendez-vous</h4>
                      </div>
-                     <div class="modal-body">                        
+                     <div class="modal-body">
                         <div class="col-md-12">
                            <div class="row">
-                              <div class="form-group">
-                                 <label>Description</label>
-                                 <textarea class="form-control" name="description" placeholder="Description" rows="2">${agenda.description}</textarea>
+                              <div class="col-md-4">
+                                 <div class="form-group">
+                                    <label>Patient</label>
+                                    <select class="form-control" name="id_patient">
+                                       <c:forEach items="${patients}" var="item">
+                                          <option value="${item.id_patient}">${item.nom} ${item.prenom}</option>
+                                       </c:forEach>
+                                    </select>
+                                 </div>  
+                              </div>
+                              <div class="col-md-8">
+                                 <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" name="description" placeholder="Description" rows="2">${agenda.description}</textarea>
+                                 </div>
                               </div>
                            </div>
                            <div class="row">
@@ -238,12 +271,26 @@
                      </div>
                      <div class="modal-body">                        
                         <div class="col-md-12">
+                           
                            <div class="row">
-                              <div class="form-group">
-                                 <label>Description</label>
-                                 <textarea class="form-control" name="description" id="rdv_description" placeholder="Description" rows="2"><div id="rdv_description"></div></textarea>
+                              <div class="col-md-4">
+                                 <div class="form-group">
+                                    <label>Patient</label>
+                                    <select class="form-control" name="id_patient">
+                                       <c:forEach items="${patients}" var="item">
+                                          <option value="${item.id_patient}">${item.nom} ${item.prenom}</option>
+                                       </c:forEach>
+                                    </select>
+                                 </div>  
                               </div>
-                           </div>
+                              <div class="col-md-8">
+                                 <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control" name="description" id="rdv_description" placeholder="Description" rows="2"></textarea>
+                                 </div>
+                              </div>
+                           </div>                           
+                           
                            <div class="row">
                               <div class="col-lg-4"><hr></div>
                               <div class="col-lg-4"><b>Date de début</b></div>
@@ -260,6 +307,7 @@
                                  <input type="time" class="form-control pull-right" id="rdv_heure_debut" name="heure_debut"/>                                    
                               </div>
                            </div>
+                           
                            <div class="row">
                               <div class="col-lg-4"><hr></div>
                               <div class="col-lg-4"><b>Date de fin</b></div>
