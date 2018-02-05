@@ -988,7 +988,7 @@
             
          <%-- ************************************************************* --%>
             
-         <!--  Model Add Agenda  -->
+         <!--  Model Update Agenda  -->
          <script>
             function fillUpdateAgendaForm(id,description,date_debut,heure_debut,date_fin,heure_fin,etat){
                document.getElementById("rdv_id_agenda").value = id;
@@ -1002,6 +1002,14 @@
          </script>
          <div class="modal fade" id="modalUpdateAgenda" role="dialog">
             <div class="modal-dialog">
+               <%-- delete rdv form --%>
+               <form method="POST" action="/Maven1/deleteAgenda" id="form_delete_rdv">
+                  <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                  <input type="hidden" name="form" value="patientDashboard" />
+                  <input type="hidden" name="id_agenda" id="rdv_id_agenda" />
+                  <input type="hidden" name="id_patient" value="${patient.id_patient}" />
+               </form>
+                  
                <!-- Form begin -->
                <form method="POST" action="<%=request.getContextPath()%>/updateAgenda/${patient.id_patient}">
                   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
@@ -1069,10 +1077,16 @@
                            </div>
                         </div>
                      </div>
-                     <div class="modal-footer">
+                    <div class="modal-footer">
                         <div class="col-md-2">
                            <div class="form-group">               
                               <button type="submit" class="btn btn-primary">Modifier</button>  
+                           </div>  
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-2">
+                           <div class="form-group">                              
+                              <button type="submit" form="form_delete_rdv" class="btn btn-danger">Effacer rdv</button>  
                            </div>  
                         </div>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>

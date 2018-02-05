@@ -3,6 +3,8 @@ package controllers;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import models.*;
 import org.springframework.context.ApplicationContext;
@@ -45,12 +47,20 @@ public class AgendaController {
       ArrayList<Agenda> agendas = service.getAgendasOfUser(id_user);
       ArrayList<Patient> patients = service.getPatients(id_user);
       
+      Map<Integer, Patient> mapPatients = new HashMap<Integer, Patient>();
+      for (Patient patient : patients) {
+         mapPatients.put(patient.getId_patient(), patient);
+      }
+      
+      for(int i=1;i<4;i++)
+         System.out.println("patient: "+i+" ==> "+mapPatients.get(i).toString());
+      
       model.addAttribute("pageTitle", "Mon agenda");
       model.addAttribute("agendas", agendas);
       model.addAttribute("patients", patients);
+      model.addAttribute("mapPatients", mapPatients);
       return new ModelAndView("user_agenda");
    }
-   
    
    //Add Agenda ****************************************************************
    @RequestMapping(value="/addAgenda", method = RequestMethod.POST)
@@ -129,7 +139,6 @@ public class AgendaController {
       return mv;
    }
    
-   
    //Submit Update Agenda ******************************************************
    @RequestMapping(value={"/updateAgenda"}, method = RequestMethod.POST)
    public ModelAndView submitUpdateHMg2(RedirectAttributes params, HttpServletRequest req){
@@ -146,7 +155,7 @@ public class AgendaController {
       object.setHeure_debut(req.getParameter("heure_debut"));
       object.setHeure_fin(req.getParameter("heure_fin"));
       
-      ModelAndView mv ;      
+      ModelAndView mv ;
       if(!req.getParameter("form").isEmpty() && req.getParameter("form").equals("agenda"))
          mv = new ModelAndView("redirect:/agenda");
       else
@@ -165,4 +174,26 @@ public class AgendaController {
       params.addFlashAttribute("alertSuccess", "Modification réussi.");
       return mv;
    }
+   
+   //Delete Agenda ************************************************************
+   @RequestMapping(value={"/deleteAgenda"}, method = RequestMethod.POST)
+   public ModelAndView deletePatient(RedirectAttributes params,HttpServletRequest req){
+      int id_agenda = Integer.parseInt(req.getParameter("id_agenda"));
+      try{
+         service.deleteAgenda(id_agenda);
+         //delete dossier patient
+         params.addFlashAttribute("alertSuccess", "Rendez-vous effacé.");
+      }catch(Exception e){
+         String errorMessage = "Erreur de suppression du rdv. <li>Cause: "+e.getCause()+"</li><li>Message: "+e.getMessage()+"</li>";
+         params.addFlashAttribute("alertDanger", errorMessage);
+      }
+      ModelAndView mv;
+      if(!req.getParameter("form").isEmpty() && req.getParameter("form").toString().equals("agenda"))
+         mv = new ModelAndView("redirect:/agenda" );
+      else if(!req.getParameter("form").isEmpty() && req.getParameter("form").toString().equals("patientDashboard"))
+         mv = new ModelAndView("redirect:/patient/"+Integer.parseInt(req.getParameter("id_patient")) );
+      else mv = new ModelAndView("redirect:/home");
+      return mv;
+   }
+   
 }

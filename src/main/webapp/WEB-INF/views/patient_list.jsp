@@ -89,93 +89,8 @@
                                           </tr>
                                        </c:forEach>                     
                                     </tbody>
-                                 </table>
-                                    
+                                 </table>                                 
                               </div>
-                              <script>
-                                 function deletePatientFunction(id_patient,nom,prenom){
-                                    var patient = nom+" "+prenom;
-                                    var go = confirm("Vos êtes sur les points d'effacer le dossier du patient "+patient+".\n voulez-vous continuer?");
-                                    if(go){
-                                       document.getElementById("id_patient_for_delete").value = id_patient;
-                                       document.getElementById("formDeletingPatient").submit();
-                                    }
-                                 }
-                                 function openPatient(id_patient){                                    
-                                    window.open("<%=request.getContextPath()%>/patient/"+id_patient, "_self");
-                                 }
-                                 
-                                 function focusOnNom(){
-                                    document.getElementById('nom').focus();
-                                 }
-                                 
-                                 $(document).ready(function() {                                    
-                                    // Setup - add a text input to each footer cell
-                                    $('#example tfoot th').each( function () {
-                                       var title = $(this).text();
-                                       if(title=='id')
-                                          ;//$(this).html( '<input type="text" placeholder="Patient" size="7"/>' );
-                                       else if(title=='Patient')
-                                          $(this).html( '<input type="text" placeholder="Patient" size="10"/>' );
-                                       else if(title=='dob')
-                                          $(this).html( '<input type="text" placeholder="Date" size="10"/>' );
-                                       else if(title=='')
-                                          ;//$(this).html( '<input type="text" placeholder="Patient" size="7"/>' );
-                                       
-                                    } );
-                                    
-                                    var table = $('#example').DataTable( {
-                                       
-                                       //"dom": '<lfr<t>ip>',
-                                       "dom": 
-                                               "<'row'<'col-sm-6'l><'col-sm-2'><'col-sm-4'f>>" +
-                                               "<'row'<'col-sm-12'tr>>" +
-                                               "<'row'<'col-sm-4'i><'col-sm-2'><'col-sm-6'p>>",
-                                       
-                                       "paging":   true,
-                                       "ordering": true,
-                                       "info":     true,
-                                       "stateSave": false,
-                                       "pagingType": "full_numbers", // simple, numbers, simple_numbers, funn, first_last_numbers, full_numbers
-                                       "lengthMenu": [[ 10, 25, 50, -1], [10, 25, 50, "All"]],
-                                       
-                                       "language": {
-                                          "lengthMenu": "_MENU_  lignes par page",
-                                          "zeroRecords": "Aucun patient enregistré.",
-                                          "info": "Page _PAGE_ / _PAGES_",
-                                          "infoEmpty": "Aucun patient enregistré...",
-                                          "infoFiltered": "(filtered from _MAX_ total records)",
-                                          "decimal": ",",
-                                          "thousands": "."
-                                       },
-                                       "columnDefs": [
-                                          //{ "targets":  -1 , "visible": true },
-                                          { "targets": [ 0 ], "visible": true, "searchable": true },
-                                          { "targets": [ 3 ], "visible": true }
-                                       ],
-                                       
-                                       //Row created callback
-                                       "createdRow": function ( row, data, index ) {
-                                          if ( data[1].replace(/[\$,]/g, '') * 1 > 200000 ) {
-                                             $('td', row).eq(1).addClass('highlight');
-                                          }
-                                       },
-                                       "scrollCollapse": false,
-                                       "paging":         true,                 
-                                    } );
-                                    
-                                    // Apply the search
-                                    table.columns().every( function () {
-                                       var that = this;                 
-                                       $( 'input', this.footer() ).on( 'keyup change', function () {
-                                          if ( that.search() !== this.value ) {
-                                             that.search( this.value ).draw();
-                                          }
-                                       } );
-                                    } );              
-                                 } );                                 
-                              </script>       
-                                 
                            </div><!-- /.row -->
                         </div><!-- ./box-body -->
                            
@@ -192,11 +107,8 @@
             </section>
             <!-- /.content -->
          </div>
-         <!-- /.content-wrapper -->
-            
-            
-            
-            
+         <!-- /.content-wrapper -->            
+         
          <!--  Model Add patient  -->
          <div class="modal fade" id="modelAddPatient" role="dialog">
             <div class="modal-dialog">
@@ -264,17 +176,100 @@
                   </form>
                </div>
             </div>
-               
-               
-               
-         <jsp:include page="layouts/footer.jsp" />
             
+            
+         <jsp:include page="layouts/footer.jsp" />            
             
             
       </div>
       <!-- ./wrapper -->
          
       <jsp:include page="layouts/scripts.jsp" />
-         
+      
+      <%-- Script for DataTables to list patients --%>
+      <script>
+         function deletePatientFunction(id_patient,nom,prenom){
+            var patient = nom+" "+prenom;
+            var go = confirm("Vos êtes sur les points d'effacer le dossier du patient "+patient+".\n voulez-vous continuer?");
+            if(go){
+               document.getElementById("id_patient_for_delete").value = id_patient;
+               document.getElementById("formDeletingPatient").submit();
+            }
+         }
+         function openPatient(id_patient){                                    
+            window.open("<%=request.getContextPath()%>/patient/"+id_patient, "_self");
+         }
+                                 
+         function focusOnNom(){
+            document.getElementById('nom').focus();
+         }
+                                 
+         $(document).ready(function() {                                    
+            // Setup - add a text input to each footer cell
+            $('#example tfoot th').each( function () {
+               var title = $(this).text();
+               if(title=='id')
+                  ;//$(this).html( '<input type="text" placeholder="Patient" size="7"/>' );
+               else if(title=='Patient')
+                  $(this).html( '<input type="text" placeholder="Patient" size="10"/>' );
+               else if(title=='dob')
+                  $(this).html( '<input type="text" placeholder="Date" size="10"/>' );
+               else if(title=='')
+                  ;//$(this).html( '<input type="text" placeholder="Patient" size="7"/>' );
+                                       
+            } );
+                                    
+            var table = $('#example').DataTable( {
+                                       
+               //"dom": '<lfr<t>ip>',
+               "dom": 
+                       "<'row'<'col-sm-6'l><'col-sm-2'><'col-sm-4'f>>" +
+                       "<'row'<'col-sm-12'tr>>" +
+                       "<'row'<'col-sm-4'i><'col-sm-2'><'col-sm-6'p>>",
+                                       
+               "paging":   true,
+               "ordering": true,
+               "info":     true,
+               "stateSave": false,
+               "pagingType": "full_numbers", // simple, numbers, simple_numbers, funn, first_last_numbers, full_numbers
+               "lengthMenu": [[ 10, 25, 50, -1], [10, 25, 50, "All"]],
+                                       
+               "language": {
+                  "lengthMenu": "_MENU_  lignes par page",
+                  "zeroRecords": "Aucun patient enregistré.",
+                  "info": "Page _PAGE_ / _PAGES_",
+                  "infoEmpty": "Aucun patient enregistré...",
+                  "infoFiltered": "(filtered from _MAX_ total records)",
+                  "decimal": ",",
+                  "thousands": "."
+               },
+               "columnDefs": [
+                  //{ "targets":  -1 , "visible": true },
+                  { "targets": [ 0 ], "visible": true, "searchable": true },
+                  { "targets": [ 3 ], "visible": true }
+               ],
+                                       
+               //Row created callback
+               "createdRow": function ( row, data, index ) {
+                  if ( data[1].replace(/[\$,]/g, '') * 1 > 200000 ) {
+                     $('td', row).eq(1).addClass('highlight');
+                  }
+               },
+               "scrollCollapse": false,
+               "paging":         true,                 
+            } );
+                                    
+            // Apply the search
+            table.columns().every( function () {
+               var that = this;                 
+               $( 'input', this.footer() ).on( 'keyup change', function () {
+                  if ( that.search() !== this.value ) {
+                     that.search( this.value ).draw();
+                  }
+               } );
+            } );              
+         } );                                 
+      </script>       
+                                 
    </body>
 </html>

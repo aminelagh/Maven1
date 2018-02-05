@@ -2,6 +2,7 @@ package services;
 
 import dao.DaoImpl;
 import java.util.ArrayList;
+import java.util.HashMap;
 import models.*;
 
 
@@ -225,4 +226,6 @@ public class ServiceImpl implements Service{
    public ArrayList<Agenda> getAgendasOfPatient(int id_patient) {
       return dao.getAgendasOfPatient(id_patient);
    }   
+   
+
 }
