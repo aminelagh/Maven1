@@ -20,7 +20,7 @@ import services.ServiceImpl;
 public class PatientController {
    
    ApplicationContext context;
-   Service service;
+   ServiceImpl service;
    
    public PatientController(){
       System.out.println("controllers.ClientController.<init>()");

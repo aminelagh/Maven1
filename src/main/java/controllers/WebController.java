@@ -1,8 +1,11 @@
 package controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import models.Patient;
+import models.*;
 import models.User;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -11,9 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.ui.ModelMap;
-import org.springframework.security.access.annotation.*;
-import org.springframework.security.*;
-import org.springframework.web.bind.annotation.PathVariable;
 import services.Service;
 import services.ServiceImpl;
 
@@ -39,36 +39,63 @@ public class WebController {
    }
    
    
-   @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
-   public ModelAndView test1(ModelMap model, HttpServletRequest request){
-      
-      User u = service.getUser(1);
-      request.getSession().setAttribute("id_user", u.getId_user());
-      request.getSession().setAttribute("nom", u.getNom());
-      request.getSession().setAttribute("prenom", u.getPrenom());
-      request.getSession().setAttribute("email", u.getEmail());
-      
+   @RequestMapping(value={"/home"}, method = RequestMethod.GET)
+   public ModelAndView home(ModelMap model, HttpServletRequest request){
+      try{
+         User u = service.getUser(1);
+         request.getSession().setAttribute("id_user", u.getId_user());
+         request.getSession().setAttribute("nom", u.getNom());
+         request.getSession().setAttribute("prenom", u.getPrenom());
+         request.getSession().setAttribute("email", u.getEmail());
+      }
+      catch(Exception e){}
+      ArrayList<Memo> memos = service.getMemosOfUser(1);
       model.addAttribute("pageTitle", "Kiné-App");
+      model.addAttribute("memos", memos);
+      
+      //RDV du jour et de la semaine
+      int id_user = Integer.parseInt(request.getSession().getAttribute("id_user").toString());
+      ArrayList<Agenda> agendas = service.getAgendasOfUser(id_user);
+      ArrayList<Patient> patients = service.getPatients(id_user);
+      
+      Map<Integer, Patient> mapPatients = new HashMap<Integer, Patient>();
+      for (Patient patient : patients) {
+         mapPatients.put(patient.getId_patient(), patient);
+      }
+      
+      for(int i=1;i<4;i++)
+         System.out.println("patient: "+i+" ==> "+mapPatients.get(i).toString());
+      
+      model.addAttribute("pageTitle", "Mon agenda");
+      model.addAttribute("agendas", agendas);
+      model.addAttribute("patients", patients);
+      model.addAttribute("mapPatients", mapPatients);
+      // /RDV j / smaine
+      
+      
+      
       return new ModelAndView("home");
    }
    
-   @RequestMapping(value={"/aze"}, method = RequestMethod.GET)
-   public ModelAndView test(){   
-      return new ModelAndView("menu");
+   @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
+   public ModelAndView test1(ModelMap model, HttpServletRequest request){
+      
+      return new ModelAndView("redirect:/home");
    }
+   
+   
+   
+   
+   
+   
+   
+   
    
    @RequestMapping(value={"/logout"}, method = RequestMethod.GET)
    public ModelAndView logout(ModelMap model, HttpServletRequest request){
       
       request.getSession().invalidate();
       model.addAttribute("pageTitle", "Kiné-App");
-      return new ModelAndView("home");
-   }
-   
-   
-   @RequestMapping(value={"/home"}, method = RequestMethod.GET)
-   public ModelAndView home(ModelMap model){
-      model.addAttribute("pageTitle", "Home page");
       return new ModelAndView("home");
    }
    

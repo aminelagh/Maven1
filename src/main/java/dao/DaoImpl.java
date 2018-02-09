@@ -4,10 +4,13 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import models.Agenda;
 import models.Diagnostic;
 import models.Historique_medical;
 import models.Imagerie;
+import models.Memo;
 import models.Patient;
 import models.Prescription;
 import models.User;
@@ -21,8 +24,116 @@ public class DaoImpl implements Dao{
       this.jdbc = jDBCUtil;
    }
    
-   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //Add ***********************************************************************
+   //Agenda ------------------
+   @Override
+   public void addAgenda(Agenda object) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      String query = "INSERT INTO agenda (id_agenda, id_user, id_patient, description, date_debut, heure_debut, date_fin, heure_fin, etat, created_at) VALUES("
+              + ""+object.getId_agenda()+","+ ""+object.getId_user()+","+ ""+object.getId_patient()+","
+              + "'"+object.getDescription()+"',"
+              + "'"+object.getDate_debut()+"',"+ "'"+object.getHeure_debut()+"',"
+              + "'"+object.getDate_fin()+"',"+ "'"+object.getHeure_fin()+"',"
+              + "'"+object.getEtat()+"',"
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updateAgenda(Agenda object) {
+      String query = "UPDATE agenda SET id_user="+object.getId_user()+", "
+              + "id_patient="+object.getId_patient()+", "
+              + "description='"+object.getDescription()+"', "
+              + "date_debut='"+object.getDate_debut()+"', "
+              + "heure_debut='"+object.getHeure_debut()+"', "
+              + "date_fin='"+object.getDate_fin()+"', "
+              + "heure_fin='"+object.getHeure_fin()+"', "
+              + "etat='"+object.getEtat()+"' "
+              + "WHERE id_agenda="+object.getId_agenda()+" ; ";
+      jdbc.execute(query);}
+   @Override
+   public void deleteAgenda(int id) {
+      String query = "DELETE FROM agenda WHERE id_agenda="+id+" ;";
+      jdbc.execute(query);
+   }
+   @Override
+   public Agenda getAgenda(int id) {
+      Agenda object = null;
+      try{
+         String query = "SELECT * FROM agenda where id_agenda = "+id;
+         ResultSet rs = jdbc.getSelection(query);
+         if(rs.next()){
+            object = new Agenda();
+            object.setId_user(rs.getInt("id_user"));
+            object.setId_agenda(rs.getInt("id_agenda"));
+            object.setId_patient(rs.getInt("id_patient"));
+            object.setDescription(rs.getString("description"));
+            object.setDate_debut(rs.getString("date_debut"));
+            object.setDate_fin(rs.getString("date_fin"));
+            object.setHeure_debut(rs.getString("heure_debut"));
+            object.setHeure_fin(rs.getString("heure_fin"));
+            object.setEtat(rs.getString("etat"));
+            object.setCreated_at(rs.getDate("created_at"));
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getAgenda(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return object;
+      
+   }
+   @Override
+   public ArrayList<Agenda> getAgendasOfUser(int id_user) {
+      ArrayList<Agenda> items = new ArrayList<Agenda>();
+      try{
+         String query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Agenda object = new Agenda();
+            object = new Agenda();
+            object.setId_user(rs.getInt("id_user"));
+            object.setId_agenda(rs.getInt("id_agenda"));
+            object.setId_patient(rs.getInt("id_patient"));
+            object.setDescription(rs.getString("description"));
+            object.setDate_debut(rs.getString("date_debut"));
+            object.setDate_fin(rs.getString("date_fin"));
+            object.setHeure_debut(rs.getString("heure_debut"));
+            object.setHeure_fin(rs.getString("heure_fin"));
+            object.setEtat(rs.getString("etat"));
+            object.setCreated_at(rs.getDate("created_at"));
+            items.add(object);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getAgendasOfUser(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   @Override
+   public ArrayList<Agenda> getAgendasOfPatient(int id_patient) {
+      ArrayList<Agenda> items = new ArrayList<Agenda>();
+      try{
+         String query = "SELECT * FROM agenda WHERE id_patient="+id_patient+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Agenda object = new Agenda();
+            object = new Agenda();
+            object.setId_user(rs.getInt("id_user"));
+            object.setId_agenda(rs.getInt("id_agenda"));
+            object.setId_patient(rs.getInt("id_patient"));
+            object.setDescription(rs.getString("description"));
+            object.setDate_debut(rs.getString("date_debut"));
+            object.setDate_fin(rs.getString("date_fin"));
+            object.setHeure_debut(rs.getString("heure_debut"));
+            object.setHeure_fin(rs.getString("heure_fin"));
+            object.setEtat(rs.getString("etat"));
+            object.setCreated_at(rs.getDate("created_at"));
+            items.add(object);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getAgendasOfPatient(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   
+   //Diagnostic --------------
    @Override
    public void addDiagnostic(Diagnostic dig) {
       SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
@@ -35,82 +146,6 @@ public class DaoImpl implements Dao{
               + "'"+created_at+"');";
       jdbc.execute(query);
    }
-   
-   @Override
-   public void addHistorique_medical(Historique_medical hm) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String created_at = sdf.format(new Date());
-      String date = sdf.format(hm.getDate());
-      String query = "INSERT INTO historique_medical (id_hm, id_patient, description, date, created_at) VALUES("
-              + ""+hm.getId_hm()+","
-              + ""+hm.getId_patient()+","
-              + "'"+hm.getDescription()+"',"
-              + "'"+date+"',"
-              + "'"+created_at+"');";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void addImagerie(Imagerie im) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String created_at = sdf.format(new Date());
-      String query = "INSERT INTO imagerie (id_imagerie, id_prescription, filename, created_at) VALUES("
-              + ""+im.getId_imagerie()+","
-              + ""+im.getId_prescription()+","
-              + "'"+im.getFilename()+"',"
-              + "'"+created_at+"');";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void addPatient(Patient p) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String created_at = sdf.format(new Date());
-      int fumeur = p.isFumeur() ? 1 : 0;
-      String query = "INSERT INTO patient (id_patient, id_user, nom, prenom, cin, adresse, dob, fumeur, created_at) VALUES("
-              + ""+p.getId_patient()+","
-              + ""+p.getId_user()+","
-              + "'"+p.getNom()+"',"
-              + "'"+p.getPrenom()+"',"
-              + "'"+p.getCin()+"',"
-              + "'"+p.getAdresse()+"',"
-              + "'"+p.getDob()+"',"
-              + ""+fumeur+","
-              + "'"+created_at+"');";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void addPrescription(Prescription pr) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String created_at = sdf.format(new Date());
-      String date = sdf.format(pr.getDate());
-      String query = "INSERT INTO prescription (id_prescription, id_patient, description, date, created_at) VALUES("
-              + ""+pr.getId_prescription()+", "
-              + ""+pr.getId_patient()+", "
-              + "'"+pr.getDescription()+"', "
-              + "'"+date+"', "
-              + "'"+created_at+"');";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void addUser(User object) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String created_at = sdf.format(new Date());
-      String query = "INSERT INTO user (id_user, id_role, nom, prenom, email, password, created_at) VALUES("
-              + ""+object.getId_user()+", "
-              + ""+object.getId_role()+", "
-              + "'"+object.getNom()+"', "
-              + "'"+object.getPrenom()+"', "
-              + "'"+object.getEmail()+"', "
-              + "'"+object.getPassword()+"', "
-              + "'"+created_at+"');";
-      jdbc.execute(query);
-   }
-   
-   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //Update ********************************************************************
    @Override
    public void updateDiagnostic(Diagnostic dig) {
       String query = "UPDATE diagnostic SET id_patient="+dig.getId_patient()+", "
@@ -119,100 +154,11 @@ public class DaoImpl implements Dao{
               + "WHERE id_diagnostic="+dig.getId_diagnostic()+" ; ";
       jdbc.execute(query);
    }
-   
-   @Override
-   public void updateHistorique_medical(Historique_medical hm) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String date = sdf.format(hm.getDate());
-      String query = "UPDATE historique_medical SET id_patient="+hm.getId_patient()+", "
-              + "description='"+hm.getDescription()+"', date='"+date+"' "
-              + "WHERE id_hm="+hm.getId_hm()+" ; ";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void updateImagerie(Imagerie im) {
-      String query = "UPDATE patient SET id_prescription="+im.getId_prescription()+", "
-              + "filename='"+im.getFilename()+"'  "
-              + "WHERE id_imagerie="+im.getId_imagerie()+" ; ";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void updatePatient(Patient p) {
-      int fumeur = p.isFumeur()?1:0;
-      String query = "UPDATE patient SET id_user="+p.getId_user()+", "
-              + "nom='"+p.getNom()+"', "
-              + "prenom='"+p.getPrenom()+"', "
-              + "cin='"+p.getCin()+"', "
-              + "adresse='"+p.getAdresse()+"', "
-              + "dob='"+p.getDob()+"', "
-              + "fumeur="+fumeur+" "
-              + "WHERE id_patient="+p.getId_patient()+" ; ";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void updatePrescription(Prescription pr) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String date = sdf.format(pr.getDate());
-      String query = "UPDATE prescription SET id_patient="+pr.getId_patient()+", "
-              + "description='"+pr.getDescription()+"', "
-              + "date='"+date+"' "
-              + "WHERE id_prescription="+pr.getId_prescription()+" ; ";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void updateUser(User object) {
-      String query = "UPDATE user SET id_role="+object.getId_role()+", "
-              + "nom='"+object.getNom()+"', "
-              + "prenom='"+object.getPrenom()+"', "
-              + "email='"+object.getEmail()+"', "
-              + "password='"+object.getPassword()+"' "
-              + "WHERE id_user="+object.getId_user()+" ; ";
-      jdbc.execute(query);}
-   
-   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //Delete ********************************************************************
    @Override
    public void deleteDiagnostic(int dig) {
       String query = "DELETE FROM diagnostic WHERE id_diagnostic="+dig+" ;";
       jdbc.execute(query);
    }
-   
-   @Override
-   public void deleteHistorique_medical(int hm) {
-      String query = "DELETE FROM historique_medical WHERE id_hm="+hm+" ;";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void deleteImagerie(int im) {
-      String query = "DELETE FROM imagerie WHERE id_imagerie="+im+" ;";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void deletePatient(int pa) {
-      String query = "DELETE FROM patient WHERE id_patient="+pa+" ;";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void deletePrescription(int pr) {
-      String query = "DELETE FROM prescription WHERE id_prescription="+pr+" ;";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public void deleteUser(int id) {
-      String query = "DELETE FROM user WHERE id_user="+id+" ;";
-      jdbc.execute(query);
-   }
-   
-   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //get ***********************************************************************
    @Override
    public Diagnostic getDiagnostic(int id_dig) {
       Diagnostic p = null;
@@ -232,7 +178,55 @@ public class DaoImpl implements Dao{
       }
       return p;
    }
+   @Override
+   public ArrayList<Diagnostic> getDiagnosticsOfPatient(int id) {
+      ArrayList<Diagnostic> items = new ArrayList<Diagnostic>();
+      try{
+         String query = "SELECT * FROM diagnostic WHERE id_patient="+id+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Diagnostic p = new Diagnostic();
+            p.setId_diagnostic(rs.getInt("id_diagnostic"));
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setDescription(rs.getString("description"));
+            p.setNombre_seances(rs.getInt("nombre_seances"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getDiagnosticsOfPatient(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
    
+   //HM ----------------------
+   @Override
+   public void addHistorique_medical(Historique_medical hm) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      String date = sdf.format(hm.getDate());
+      String query = "INSERT INTO historique_medical (id_hm, id_patient, description, date, created_at) VALUES("
+              + ""+hm.getId_hm()+","
+              + ""+hm.getId_patient()+","
+              + "'"+hm.getDescription()+"',"
+              + "'"+date+"',"
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updateHistorique_medical(Historique_medical hm) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String date = sdf.format(hm.getDate());
+      String query = "UPDATE historique_medical SET id_patient="+hm.getId_patient()+", "
+              + "description='"+hm.getDescription()+"', date='"+date+"' "
+              + "WHERE id_hm="+hm.getId_hm()+" ; ";
+      jdbc.execute(query);
+   }
+   @Override
+   public void deleteHistorique_medical(int hm) {
+      String query = "DELETE FROM historique_medical WHERE id_hm="+hm+" ;";
+      jdbc.execute(query);
+   }
    @Override
    public Historique_medical getHistorique_medical(int id_hm) {
       Historique_medical hm = null;
@@ -252,7 +246,51 @@ public class DaoImpl implements Dao{
       }
       return hm;
    }
+   @Override
+   public ArrayList<Historique_medical> getHistorique_medicalOfPatient(int id) {
+      ArrayList<Historique_medical> items = new ArrayList<Historique_medical>();
+      try{
+         String query = "SELECT * FROM historique_medical WHERE id_patient="+id+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Historique_medical p = new Historique_medical();
+            p.setId_hm(rs.getInt("id_hm"));
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setDescription(rs.getString("description"));
+            p.setDate(rs.getDate("date"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getHistorique_medicalOfPatient(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
    
+   //Imagerie ----------------
+   @Override
+   public void addImagerie(Imagerie im) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      String query = "INSERT INTO imagerie (id_imagerie, id_prescription, filename, created_at) VALUES("
+              + ""+im.getId_imagerie()+","
+              + ""+im.getId_prescription()+","
+              + "'"+im.getFilename()+"',"
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updateImagerie(Imagerie im) {
+      String query = "UPDATE patient SET id_prescription="+im.getId_prescription()+", "
+              + "filename='"+im.getFilename()+"'  "
+              + "WHERE id_imagerie="+im.getId_imagerie()+" ; ";
+      jdbc.execute(query);
+   }
+   @Override
+   public void deleteImagerie(int im) {
+      String query = "DELETE FROM imagerie WHERE id_imagerie="+im+" ;";
+      jdbc.execute(query);
+   }
    @Override
    public Imagerie getImagerie(int id_im) {
       Imagerie im = null;
@@ -271,7 +309,148 @@ public class DaoImpl implements Dao{
       }
       return im;
    }
+   @Override
+   public ArrayList<Imagerie> getImageriesOfPrescription(int id_prescription) {
+      ArrayList<Imagerie> items = new ArrayList<Imagerie>();
+      try{
+         String query = "SELECT * FROM imagerie WHERE id_prescription="+id_prescription+" ;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Imagerie p = new Imagerie();
+            p.setId_imagerie(rs.getInt("id_imagerie"));
+            p.setId_prescription(rs.getInt("id_prescription"));
+            p.setFilename(rs.getString("filename"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getImageriesOfPrescription(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   @Override
+   public ArrayList<Imagerie> getImageriesOfPatient(int id_patient) {
+      ArrayList<Imagerie> items = new ArrayList<Imagerie>();
+      try{
+         //String query = "SELECT * FROM imagerie WHERE id_prescription="+id_patient+" ;";
+         String query = "SELECT * FROM imagerie WHERE id_prescription IN (SELECT id_prescription FROM prescription WHERE id_patient = "+id_patient+")";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Imagerie p = new Imagerie();
+            p.setId_imagerie(rs.getInt("id_imagerie"));
+            p.setId_prescription(rs.getInt("id_prescription"));
+            p.setFilename(rs.getString("filename"));
+            p.setCreated_at(rs.getDate("created_at"));
+            items.add(p);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getImageriesOfPrescription(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
    
+   //Memo --------------------
+   @Override
+   public void addMemo(Memo object) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      String query = "INSERT INTO memo (id_memo, id_user, description,etat,created_at) VALUES("
+              + ""+object.getId_memo()+","
+              + ""+object.getId_user()+","
+              + "'"+object.getDescription()+"',"
+              + "'"+object.getEtat()+"',"
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updateMemo(Memo object) {
+      String query = "UPDATE memo SET id_user="+object.getId_user()+", "
+              + "description='"+object.getDescription()+"',  "
+              + "etat='"+object.getEtat()+"'  "
+              + "WHERE id_memo="+object.getId_memo()+" ; ";
+      jdbc.execute(query);
+   }
+   @Override
+   public void deleteMemo(int id) {
+      String query = "DELETE FROM memo WHERE id_memo="+id+" ;";
+      jdbc.execute(query);
+   }
+   @Override
+   public Memo getMemo(int id) {
+      Memo object = null;
+      try{
+         String query = "SELECT * FROM memo where id_memo = "+id;
+         ResultSet rs = jdbc.getSelection(query);
+         if(rs.next()){
+            object = new Memo();
+            object.setId_memo(rs.getInt("id_memo"));
+            object.setId_user(rs.getInt("id_user"));
+            object.setDescription(rs.getString("description"));
+            object.setEtat(rs.getString("etat"));
+            object.setCreated_at(rs.getDate("created_at"));
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getMemo(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return object;
+   }
+   @Override
+   public ArrayList<Memo> getMemosOfUser(int id_user) {
+      ArrayList<Memo> items = new ArrayList<Memo>();
+      try{
+         String query = "SELECT * FROM memo WHERE id_user="+id_user+" order by created_at desc;";
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Memo object = new Memo();
+            object.setId_memo(rs.getInt("id_memo"));
+            object.setId_user(rs.getInt("id_user"));
+            object.setDescription(rs.getString("description"));
+            object.setEtat(rs.getString("etat"));
+            object.setCreated_at(rs.getDate("created_at"));
+            items.add(object);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getMemosOfUser(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   
+   //Patient -----------------
+   @Override
+   public void addPatient(Patient p) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      int fumeur = p.isFumeur() ? 1 : 0;
+      String query = "INSERT INTO patient (id_patient, id_user, nom, prenom, cin, adresse, dob, fumeur, created_at) VALUES("
+              + ""+p.getId_patient()+","
+              + ""+p.getId_user()+","
+              + "'"+p.getNom()+"',"
+              + "'"+p.getPrenom()+"',"
+              + "'"+p.getCin()+"',"
+              + "'"+p.getAdresse()+"',"
+              + "'"+p.getDob()+"',"
+              + ""+fumeur+","
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updatePatient(Patient p) {
+      int fumeur = p.isFumeur()?1:0;
+      String query = "UPDATE patient SET id_user="+p.getId_user()+", "
+              + "nom='"+p.getNom()+"', "
+              + "prenom='"+p.getPrenom()+"', "
+              + "cin='"+p.getCin()+"', "
+              + "adresse='"+p.getAdresse()+"', "
+              + "dob='"+p.getDob()+"', "
+              + "fumeur="+fumeur+" "
+              + "WHERE id_patient="+p.getId_patient()+" ; ";
+      jdbc.execute(query);
+   }
+   @Override
+   public void deletePatient(int pa) {
+      String query = "DELETE FROM patient WHERE id_patient="+pa+" ;";
+      jdbc.execute(query);
+   }
    @Override
    public Patient getPatient(int id_pa) {
       Patient p = null;
@@ -296,174 +475,6 @@ public class DaoImpl implements Dao{
       }
       return p;
    }
-   
-   @Override
-   public Prescription getPrescription(int id_pr) {
-      Prescription p = null;
-      try{
-         String query = "SELECT * FROM prescription where id_prescription = "+id_pr;
-         ResultSet rs = jdbc.getSelection(query);
-         if(rs.next()){
-            p = new Prescription();
-            p.setId_prescription(rs.getInt("id_prescription"));
-            p.setId_patient(rs.getInt("id_patient"));
-            p.setDescription(rs.getString("description"));
-            p.setDate(rs.getDate("date"));
-            p.setCreated_at(rs.getDate("created_at"));
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getPrescription(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return p;
-   }
-   
-   @Override
-   public User getUser(int id) {
-      User object = null;
-      try{
-         String query = "SELECT * FROM user where id_user = "+id;
-         ResultSet rs = jdbc.getSelection(query);
-         if(rs.next()){
-            object = new User();
-            object.setId_user(rs.getInt("id_user"));
-            object.setId_role(rs.getInt("id_role"));
-            object.setNom(rs.getString("nom"));
-            object.setPrenom(rs.getString("prenom"));
-            object.setEmail(rs.getString("email"));
-            object.setPassword(rs.getString("password"));
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getUser(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return object;
-   }
-   
-   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-   //get (s) *******************************************************************
-   
-   @Override
-   public ArrayList<Diagnostic> getDiagnosticsOfPatient(int id) {
-      ArrayList<Diagnostic> items = new ArrayList<Diagnostic>();
-      try{
-         String query = "SELECT * FROM diagnostic WHERE id_patient="+id+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Diagnostic p = new Diagnostic();
-            p.setId_diagnostic(rs.getInt("id_diagnostic"));
-            p.setId_patient(rs.getInt("id_patient"));
-            p.setDescription(rs.getString("description"));
-            p.setNombre_seances(rs.getInt("nombre_seances"));
-            p.setCreated_at(rs.getDate("created_at"));
-            items.add(p);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getDiagnosticsOfPatient(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
-   public ArrayList<Diagnostic> getDiagnosticsOfPatientTopX(int id, int x) {
-      ArrayList<Diagnostic> items = new ArrayList<Diagnostic>();
-      try{
-         String query = "SELECT * FROM diagnostic WHERE id_patient="+id+" LIMIT "+x+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Diagnostic p = new Diagnostic();
-            p.setId_diagnostic(rs.getInt("id_diagnostic"));
-            p.setId_patient(rs.getInt("id_patient"));
-            p.setDescription(rs.getString("description"));
-            p.setNombre_seances(rs.getInt("nombre_seances"));
-            p.setCreated_at(rs.getDate("created_at"));
-            items.add(p);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getDiagnosticsOfPatient(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
-   @Override
-   public ArrayList<Historique_medical> getHistorique_medicalOfPatient(int id) {
-      ArrayList<Historique_medical> items = new ArrayList<Historique_medical>();
-      try{
-         String query = "SELECT * FROM historique_medical WHERE id_patient="+id+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Historique_medical p = new Historique_medical();
-            p.setId_hm(rs.getInt("id_hm"));
-            p.setId_patient(rs.getInt("id_patient"));
-            p.setDescription(rs.getString("description"));
-            p.setDate(rs.getDate("date"));
-            p.setCreated_at(rs.getDate("created_at"));
-            items.add(p);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getHistorique_medicalOfPatient(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
-   public ArrayList<Historique_medical> getHistorique_medicalOfPatientTopX(int id, int x) {
-      ArrayList<Historique_medical> items = new ArrayList<Historique_medical>();
-      try{
-         String query = "SELECT * FROM historique_medical WHERE id_patient="+id+" LIMIT "+x+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Historique_medical p = new Historique_medical();
-            p.setId_hm(rs.getInt("id_hm"));
-            p.setId_patient(rs.getInt("id_patient"));
-            p.setDescription(rs.getString("description"));
-            p.setDate(rs.getDate("date"));
-            p.setCreated_at(rs.getDate("created_at"));
-            items.add(p);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getHistorique_medicalOfPatient(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
-   @Override
-   public ArrayList<Imagerie> getImageriesOfPrescription(int id_prescription) {
-      ArrayList<Imagerie> items = new ArrayList<Imagerie>();
-      try{
-         String query = "SELECT * FROM imagerie WHERE id_prescription="+id_prescription+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Imagerie p = new Imagerie();
-            p.setId_imagerie(rs.getInt("id_imagerie"));
-            p.setId_prescription(rs.getInt("id_prescription"));
-            p.setFilename(rs.getString("filename"));
-            p.setCreated_at(rs.getDate("created_at"));
-            items.add(p);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getImageriesOfPrescription(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
-   @Override
-   public ArrayList<Imagerie> getImageriesOfPatient(int id_patient) {
-      ArrayList<Imagerie> items = new ArrayList<Imagerie>();
-      try{
-         //String query = "SELECT * FROM imagerie WHERE id_prescription="+id_patient+" ;";
-         String query = "SELECT * FROM imagerie WHERE id_prescription IN (SELECT id_prescription FROM prescription WHERE id_patient = "+id_patient+")";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Imagerie p = new Imagerie();
-            p.setId_imagerie(rs.getInt("id_imagerie"));
-            p.setId_prescription(rs.getInt("id_prescription"));
-            p.setFilename(rs.getString("filename"));
-            p.setCreated_at(rs.getDate("created_at"));
-            items.add(p);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getImageriesOfPrescription(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
    @Override
    public ArrayList<Patient> getPatientsOfUser(int id_user) {
       ArrayList<Patient> items = new ArrayList<Patient>();
@@ -489,6 +500,54 @@ public class DaoImpl implements Dao{
       return items;
    }
    
+   //Prescription ------------
+   @Override
+   public void addPrescription(Prescription pr) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      String date = sdf.format(pr.getDate());
+      String query = "INSERT INTO prescription (id_prescription, id_patient, description, date, created_at) VALUES("
+              + ""+pr.getId_prescription()+", "
+              + ""+pr.getId_patient()+", "
+              + "'"+pr.getDescription()+"', "
+              + "'"+date+"', "
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updatePrescription(Prescription pr) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String date = sdf.format(pr.getDate());
+      String query = "UPDATE prescription SET id_patient="+pr.getId_patient()+", "
+              + "description='"+pr.getDescription()+"', "
+              + "date='"+date+"' "
+              + "WHERE id_prescription="+pr.getId_prescription()+" ; ";
+      jdbc.execute(query);
+   }
+   @Override
+   public void deletePrescription(int pr) {
+      String query = "DELETE FROM prescription WHERE id_prescription="+pr+" ;";
+      jdbc.execute(query);
+   }
+   @Override
+   public Prescription getPrescription(int id_pr) {
+      Prescription p = null;
+      try{
+         String query = "SELECT * FROM prescription where id_prescription = "+id_pr;
+         ResultSet rs = jdbc.getSelection(query);
+         if(rs.next()){
+            p = new Prescription();
+            p.setId_prescription(rs.getInt("id_prescription"));
+            p.setId_patient(rs.getInt("id_patient"));
+            p.setDescription(rs.getString("description"));
+            p.setDate(rs.getDate("date"));
+            p.setCreated_at(rs.getDate("created_at"));
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getPrescription(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return p;
+   }
    @Override
    public ArrayList<Prescription> getPrescriptionsOfPatient(int id_patient) {
       ArrayList<Prescription> items = new ArrayList<Prescription>();
@@ -510,7 +569,56 @@ public class DaoImpl implements Dao{
       return items;
    }
    
-   //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+   //User --------------------
+   @Override
+   public void addUser(User object) {
+      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
+      String created_at = sdf.format(new Date());
+      String query = "INSERT INTO user (id_user, id_role, nom, prenom, email, password, created_at) VALUES("
+              + ""+object.getId_user()+", "
+              + ""+object.getId_role()+", "
+              + "'"+object.getNom()+"', "
+              + "'"+object.getPrenom()+"', "
+              + "'"+object.getEmail()+"', "
+              + "'"+object.getPassword()+"', "
+              + "'"+created_at+"');";
+      jdbc.execute(query);
+   }
+   @Override
+   public void updateUser(User object) {
+      String query = "UPDATE user SET id_role="+object.getId_role()+", "
+              + "nom='"+object.getNom()+"', "
+              + "prenom='"+object.getPrenom()+"', "
+              + "email='"+object.getEmail()+"', "
+              + "password='"+object.getPassword()+"' "
+              + "WHERE id_user="+object.getId_user()+" ; ";
+      jdbc.execute(query);}
+   @Override
+   public void deleteUser(int id) {
+      String query = "DELETE FROM user WHERE id_user="+id+" ;";
+      jdbc.execute(query);
+   }
+   @Override
+   public User getUser(int id) {
+      User object = null;
+      try{
+         String query = "SELECT * FROM user where id_user = "+id;
+         ResultSet rs = jdbc.getSelection(query);
+         if(rs.next()){
+            object = new User();
+            object.setId_user(rs.getInt("id_user"));
+            object.setId_role(rs.getInt("id_role"));
+            object.setNom(rs.getString("nom"));
+            object.setPrenom(rs.getString("prenom"));
+            object.setEmail(rs.getString("email"));
+            object.setPassword(rs.getString("password"));
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getUser(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return object;
+   }
+   
    //***************************************************************************
    
    @Override
@@ -552,6 +660,9 @@ public class DaoImpl implements Dao{
          case "agenda":
             query = "SELECT id_agenda FROM agenda order by id_agenda desc limit 1";
             break;
+         case "memo":
+            query = "SELECT id_memo FROM memo order by id_memo desc limit 1";
+            break;
       }
       int nextid=1;
       try{
@@ -564,117 +675,6 @@ public class DaoImpl implements Dao{
       return nextid;
    }
    
-   //Agenda ....................................................................
-   @Override
-   public void addAgenda(Agenda object) {
-      SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
-      String created_at = sdf.format(new Date());
-      String query = "INSERT INTO agenda (id_agenda, id_user, id_patient, description, date_debut, heure_debut, date_fin, heure_fin, etat, created_at) VALUES("
-              + ""+object.getId_agenda()+","+ ""+object.getId_user()+","+ ""+object.getId_patient()+","
-              + "'"+object.getDescription()+"',"
-              + "'"+object.getDate_debut()+"',"+ "'"+object.getHeure_debut()+"',"
-              + "'"+object.getDate_fin()+"',"+ "'"+object.getHeure_fin()+"',"
-              + "'"+object.getEtat()+"',"
-              + "'"+created_at+"');";
-      jdbc.execute(query);
-   }
    
-   @Override
-   public void updateAgenda(Agenda object) {
-      String query = "UPDATE agenda SET id_user="+object.getId_user()+", "
-              + "id_patient="+object.getId_patient()+", "
-              + "description='"+object.getDescription()+"', "
-              + "date_debut='"+object.getDate_debut()+"', "
-              + "heure_debut='"+object.getHeure_debut()+"', "
-              + "date_fin='"+object.getDate_fin()+"', "
-              + "heure_fin='"+object.getHeure_fin()+"', "
-              + "etat='"+object.getEtat()+"' "
-              + "WHERE id_agenda="+object.getId_agenda()+" ; ";
-      jdbc.execute(query);}
    
-   @Override
-   public void deleteAgenda(int id) {
-      String query = "DELETE FROM agenda WHERE id_agenda="+id+" ;";
-      jdbc.execute(query);
-   }
-   
-   @Override
-   public Agenda getAgenda(int id) {
-      Agenda object = null;
-      try{
-         String query = "SELECT * FROM agenda where id_agenda = "+id;
-         ResultSet rs = jdbc.getSelection(query);
-         if(rs.next()){
-            object = new Agenda();
-            object.setId_user(rs.getInt("id_user"));
-            object.setId_agenda(rs.getInt("id_agenda"));
-            object.setId_patient(rs.getInt("id_patient"));
-            object.setDescription(rs.getString("description"));
-            object.setDate_debut(rs.getString("date_debut"));
-            object.setDate_fin(rs.getString("date_fin"));
-            object.setHeure_debut(rs.getString("heure_debut"));
-            object.setHeure_fin(rs.getString("heure_fin"));
-            object.setEtat(rs.getString("etat"));
-            object.setCreated_at(rs.getDate("created_at"));
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getAgenda(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return object;
-      
-   }
-   
-   @Override
-   public ArrayList<Agenda> getAgendasOfUser(int id_user) {
-      ArrayList<Agenda> items = new ArrayList<Agenda>();
-      try{
-         String query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Agenda object = new Agenda();
-            object = new Agenda();
-            object.setId_user(rs.getInt("id_user"));
-            object.setId_agenda(rs.getInt("id_agenda"));
-            object.setId_patient(rs.getInt("id_patient"));
-            object.setDescription(rs.getString("description"));
-            object.setDate_debut(rs.getString("date_debut"));
-            object.setDate_fin(rs.getString("date_fin"));
-            object.setHeure_debut(rs.getString("heure_debut"));
-            object.setHeure_fin(rs.getString("heure_fin"));
-            object.setEtat(rs.getString("etat"));
-            object.setCreated_at(rs.getDate("created_at"));
-            items.add(object);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getAgendasOfUser(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
-   
-   @Override
-   public ArrayList<Agenda> getAgendasOfPatient(int id_patient) {
-      ArrayList<Agenda> items = new ArrayList<Agenda>();
-      try{
-         String query = "SELECT * FROM agenda WHERE id_patient="+id_patient+" ;";
-         ResultSet rs = jdbc.getSelection(query);
-         while(rs.next()){
-            Agenda object = new Agenda();
-            object = new Agenda();
-            object.setId_user(rs.getInt("id_user"));
-            object.setId_agenda(rs.getInt("id_agenda"));
-            object.setId_patient(rs.getInt("id_patient"));
-            object.setDescription(rs.getString("description"));
-            object.setDate_debut(rs.getString("date_debut"));
-            object.setDate_fin(rs.getString("date_fin"));
-            object.setHeure_debut(rs.getString("heure_debut"));
-            object.setHeure_fin(rs.getString("heure_fin"));
-            object.setEtat(rs.getString("etat"));
-            object.setCreated_at(rs.getDate("created_at"));
-            items.add(object);
-         }
-      }catch(Exception e){
-         System.out.println("Erreur DaoImpl.getAgendasOfPatient(): "+e.getCause()+" \n "+e.getMessage());
-      }
-      return items;
-   }
 }
