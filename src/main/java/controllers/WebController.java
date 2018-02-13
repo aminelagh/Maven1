@@ -38,6 +38,11 @@ public class WebController {
       }
    }
    
+   @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
+   public ModelAndView test1(ModelMap model, HttpServletRequest request){
+      
+      return new ModelAndView("redirect:/home");
+   }
    
    @RequestMapping(value={"/home"}, method = RequestMethod.GET)
    public ModelAndView home(ModelMap model, HttpServletRequest request){
@@ -77,11 +82,6 @@ public class WebController {
       return new ModelAndView("home");
    }
    
-   @RequestMapping(value={"/","/index"}, method = RequestMethod.GET)
-   public ModelAndView test1(ModelMap model, HttpServletRequest request){
-      
-      return new ModelAndView("redirect:/home");
-   }
    
    
    

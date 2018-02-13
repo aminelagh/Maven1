@@ -6,14 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import models.Agenda;
-import models.Diagnostic;
-import models.Historique_medical;
-import models.Imagerie;
-import models.Memo;
-import models.Patient;
-import models.Prescription;
-import models.User;
+import models.*;
 import util.JDBCUtil;
 
 
@@ -29,48 +22,56 @@ public class DaoImpl implements Dao{
    public void addAgenda(Agenda object) {
       SimpleDateFormat sdf = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss");
       String created_at = sdf.format(new Date());
-      String query = "INSERT INTO agenda (id_agenda, id_user, id_patient, description, date_debut, heure_debut, date_fin, heure_fin, etat, created_at) VALUES("
+      String query = "INSERT INTO rdv (id_agenda, id_user, id_patient, description, date_debut, date_fin, etat, created_at) VALUES("
               + ""+object.getId_agenda()+","+ ""+object.getId_user()+","+ ""+object.getId_patient()+","
               + "'"+object.getDescription()+"',"
-              + "'"+object.getDate_debut()+"',"+ "'"+object.getHeure_debut()+"',"
-              + "'"+object.getDate_fin()+"',"+ "'"+object.getHeure_fin()+"',"
+              + "'"+object.getDate_debut()+" "+object.getHeure_debut()+"',"
+              + "'"+object.getDate_fin()+" "+object.getHeure_fin()+"',"
               + "'"+object.getEtat()+"',"
               + "'"+created_at+"');";
       jdbc.execute(query);
    }
    @Override
    public void updateAgenda(Agenda object) {
-      String query = "UPDATE agenda SET id_user="+object.getId_user()+", "
+      String query = "UPDATE rdv SET id_user="+object.getId_user()+", "
               + "id_patient="+object.getId_patient()+", "
               + "description='"+object.getDescription()+"', "
-              + "date_debut='"+object.getDate_debut()+"', "
-              + "heure_debut='"+object.getHeure_debut()+"', "
-              + "date_fin='"+object.getDate_fin()+"', "
-              + "heure_fin='"+object.getHeure_fin()+"', "
+              + "date_debut='"+object.getDate_debut()+" "+object.getHeure_debut()+"', "
+              + "date_fin='"+object.getDate_fin()+" "+object.getHeure_fin()+"', "
               + "etat='"+object.getEtat()+"' "
               + "WHERE id_agenda="+object.getId_agenda()+" ; ";
       jdbc.execute(query);}
    @Override
    public void deleteAgenda(int id) {
-      String query = "DELETE FROM agenda WHERE id_agenda="+id+" ;";
+      String query = "DELETE FROM rdv WHERE id_agenda="+id+" ;";
       jdbc.execute(query);
    }
    @Override
    public Agenda getAgenda(int id) {
       Agenda object = null;
       try{
-         String query = "SELECT * FROM agenda where id_agenda = "+id;
+         String query = "SELECT * FROM rdv where id_agenda = "+id;
          ResultSet rs = jdbc.getSelection(query);
          if(rs.next()){
+            object = new Agenda();
+            
+            String date_d = rs.getString("date_debut");
+            String date_debut = date_d.substring(0, 10);
+            String heure_debut = date_d.substring(11, 21);
+            
+            String date_f = rs.getString("date_fin");
+            String date_fin = date_f.substring(0, 10);
+            String heure_fin = date_f.substring(11, 21);
+            
             object = new Agenda();
             object.setId_user(rs.getInt("id_user"));
             object.setId_agenda(rs.getInt("id_agenda"));
             object.setId_patient(rs.getInt("id_patient"));
             object.setDescription(rs.getString("description"));
-            object.setDate_debut(rs.getString("date_debut"));
-            object.setDate_fin(rs.getString("date_fin"));
-            object.setHeure_debut(rs.getString("heure_debut"));
-            object.setHeure_fin(rs.getString("heure_fin"));
+            object.setDate_debut(date_debut);
+            object.setDate_fin(date_fin);
+            object.setHeure_debut(heure_debut);
+            object.setHeure_fin(heure_fin);
             object.setEtat(rs.getString("etat"));
             object.setCreated_at(rs.getDate("created_at"));
          }
@@ -84,19 +85,28 @@ public class DaoImpl implements Dao{
    public ArrayList<Agenda> getAgendasOfUser(int id_user) {
       ArrayList<Agenda> items = new ArrayList<Agenda>();
       try{
-         String query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";
+         String query = "SELECT * FROM rdv WHERE id_user="+id_user+" ;";
+         //String query = "Call getWeeks("+id_user+","+nbre_weeks+");";
          ResultSet rs = jdbc.getSelection(query);
          while(rs.next()){
+            String date_d = rs.getString("date_debut");
+            String date_debut = date_d.substring(0, 10);
+            String heure_debut = date_d.substring(11, 21);
+            
+            String date_f = rs.getString("date_fin");
+            String date_fin = date_f.substring(0, 10);
+            String heure_fin = date_f.substring(11, 21);
+            
             Agenda object = new Agenda();
             object = new Agenda();
             object.setId_user(rs.getInt("id_user"));
             object.setId_agenda(rs.getInt("id_agenda"));
             object.setId_patient(rs.getInt("id_patient"));
             object.setDescription(rs.getString("description"));
-            object.setDate_debut(rs.getString("date_debut"));
-            object.setDate_fin(rs.getString("date_fin"));
-            object.setHeure_debut(rs.getString("heure_debut"));
-            object.setHeure_fin(rs.getString("heure_fin"));
+            object.setDate_debut(date_debut);
+            object.setDate_fin(date_fin);
+            object.setHeure_debut(heure_debut);
+            object.setHeure_fin(heure_fin);
             object.setEtat(rs.getString("etat"));
             object.setCreated_at(rs.getDate("created_at"));
             items.add(object);
@@ -106,6 +116,34 @@ public class DaoImpl implements Dao{
       }
       return items;
    }
+   
+   /*
+   public ArrayList<Agenda> getAgendasOfUser(int id_user) {
+   ArrayList<Agenda> items = new ArrayList<Agenda>();
+   try{
+   String query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";
+   //String query = "Call getWeeks("+id_user+","+nbre_weeks+");";
+   ResultSet rs = jdbc.getSelection(query);
+   while(rs.next()){
+   Agenda object = new Agenda();
+   object = new Agenda();
+   object.setId_user(rs.getInt("id_user"));
+   object.setId_agenda(rs.getInt("id_agenda"));
+   object.setId_patient(rs.getInt("id_patient"));
+   object.setDescription(rs.getString("description"));
+   object.setDate_debut(rs.getString("date_debut"));
+   object.setDate_fin(rs.getString("date_fin"));
+   object.setHeure_debut(rs.getString("heure_debut"));
+   object.setHeure_fin(rs.getString("heure_fin"));
+   object.setEtat(rs.getString("etat"));
+   object.setCreated_at(rs.getDate("created_at"));
+   items.add(object);
+   }
+   }catch(Exception e){
+   System.out.println("Erreur DaoImpl.getAgendasOfUser(): "+e.getCause()+" \n "+e.getMessage());
+   }
+   return items;
+   }*/
    @Override
    public ArrayList<Agenda> getAgendasOfPatient(int id_patient) {
       ArrayList<Agenda> items = new ArrayList<Agenda>();
@@ -132,6 +170,60 @@ public class DaoImpl implements Dao{
       }
       return items;
    }
+   public ArrayList<Agenda> getAgendasOfUser(int id_user, String last) {
+      String query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";
+      switch(last){
+         case "day":    query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";break;
+         case "week":   query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";break;
+         case "2weeks": query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";break;
+         case "month":  query = "SELECT * FROM agenda WHERE id_user="+id_user+" ;";break;
+         
+      }
+      ArrayList<Agenda> items = new ArrayList<Agenda>();
+      try{
+         ResultSet rs = jdbc.getSelection(query);
+         while(rs.next()){
+            Agenda object = new Agenda();
+            object.setId_user(rs.getInt("id_user"));
+            object.setId_agenda(rs.getInt("id_agenda"));
+            object.setId_patient(rs.getInt("id_patient"));
+            object.setDescription(rs.getString("description"));
+            object.setDate_debut(rs.getString("date_debut"));
+            object.setDate_fin(rs.getString("date_fin"));
+            object.setHeure_debut(rs.getString("heure_debut"));
+            object.setHeure_fin(rs.getString("heure_fin"));
+            object.setEtat(rs.getString("etat"));
+            object.setCreated_at(rs.getDate("created_at"));
+            items.add(object);
+         }
+      }catch(Exception e){
+         System.out.println("Erreur DaoImpl.getAgendasOfPatient(): "+e.getCause()+" \n "+e.getMessage());
+      }
+      return items;
+   }
+   /*
+   public ArrayList<Rdv> getWeeks(int id_user, int nbre_weeks){
+   String query = "Call getWeeks("+id_user+","+nbre_weeks+");";
+   ArrayList<Rdv> items = new ArrayList<Rdv>();
+   try{
+   ResultSet rs = jdbc.getSelection(query);
+   while(rs.next()){
+   Rdv object = new Rdv();
+   object.setId_user(rs.getInt("id_user"));
+   object.setId_rdv(rs.getInt("id_rdv"));
+   object.setId_patient(rs.getInt("id_patient"));
+   object.setDescription(rs.getString("description"));
+   object.setDate_debut(rs.getDate("date_debut"));
+   object.setDate_fin(rs.getDate("date_fin"));
+   object.setEtat(rs.getString("etat"));
+   object.setCreated_at(rs.getDate("created_at"));
+   items.add(object);
+   }
+   }catch(Exception e){
+   System.out.println("Erreur DaoImpl.getWeeks(): "+e.getCause()+" \n "+e.getMessage());
+   }
+   return items;
+   }*/
    
    //Diagnostic --------------
    @Override

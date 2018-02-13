@@ -51,9 +51,8 @@ public class AgendaController {
       for (Patient patient : patients) {
          mapPatients.put(patient.getId_patient(), patient);
       }
-      
-      for(int i=1;i<4;i++)
-         System.out.println("patient: "+i+" ==> "+mapPatients.get(i).toString());
+      for (Agenda item : agendas) 
+         System.out.println(item.toString());
       
       model.addAttribute("pageTitle", "Mon agenda");
       model.addAttribute("agendas", agendas);
@@ -135,14 +134,12 @@ public class AgendaController {
          return mv;
       }
       params.addFlashAttribute("alertSuccess", "Modification réussi.");
-      //params.addFlashAttribute("alertSuccess", "+ "+object.toString());
       return mv;
    }
    
    //Submit Update Agenda ******************************************************
    @RequestMapping(value={"/updateAgenda"}, method = RequestMethod.POST)
    public ModelAndView submitUpdateHMg2(RedirectAttributes params, HttpServletRequest req){
-      
       Agenda object = new Agenda();
       object.setId_agenda(Integer.parseInt(req.getParameter("id_agenda")));
       object.setId_patient(Integer.parseInt(req.getParameter("id_patient")));
@@ -155,21 +152,23 @@ public class AgendaController {
       object.setHeure_debut(req.getParameter("heure_debut"));
       object.setHeure_fin(req.getParameter("heure_fin"));
       
-      ModelAndView mv ;
+      System.out.println("******************************");
+      //System.out.println("id_patient: "+req.getParameter("id_patient"));
+      ModelAndView mv = null;
       if(!req.getParameter("form").isEmpty() && req.getParameter("form").equals("agenda"))
          mv = new ModelAndView("redirect:/agenda");
       else
-         mv = new ModelAndView("redirect:/patient/"+object.getId_patient() );
+      mv = new ModelAndView("redirect:/patient/"+object.getId_patient() );
       
       
       try{
-         service.updateAgenda(object);
+      service.updateAgenda(object);
       }catch(Exception e){
-         String errorMessage = "<li>Erreur de modification du rendez-vous.</li>"
-                 + "<li>Cause: "+e.getCause()+"</li>"
-                 + "<li>Message: "+e.getMessage()+"</li>";
-         params.addFlashAttribute("alertDanger", errorMessage);
-         return mv;
+      String errorMessage = "<li>Erreur de modification du rendez-vous.</li>"
+      + "<li>Cause: "+e.getCause()+"</li>"
+      + "<li>Message: "+e.getMessage()+"</li>";
+      params.addFlashAttribute("alertDanger", errorMessage);
+      return mv;
       }
       params.addFlashAttribute("alertSuccess", "Modification réussi.");
       return mv;

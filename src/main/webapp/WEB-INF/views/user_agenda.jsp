@@ -10,7 +10,6 @@
          
          <jsp:include page="layouts/menu_2.jsp" />
          
-         
          <div class="content-wrapper">
             <!-- Content Header (Page header) -->
             <section class="content-header">
@@ -252,10 +251,11 @@
          
          <%-- ************************************************************* --%>
          
-         <!--  Model Add Agenda  -->
+         <!--  Model update Agenda  -->
          <script>
             function fillUpdateAgendaForm(id_agenda,id_patient,description,date_debut,heure_debut,date_fin,heure_fin,etat){
                document.getElementById("rdv_id_agenda").value = id_agenda;
+               document.getElementById("rdv_id_agenda2").value = id_agenda;
                document.getElementById("rdv_description").value = description;
                document.getElementById("rdv_date_debut").value = date_debut;
                document.getElementById("rdv_heure_debut").value = heure_debut;
@@ -280,10 +280,11 @@
                   <input type="hidden" name="id_agenda" id="rdv_id_agenda" />
                </form>
                <!-- Form begin -->
-               <form method="POST" action="<%=request.getContextPath()%>/updateAgenda/${patient.id_patient}">
+               <form method="POST" action="<%=request.getContextPath()%>/updateAgenda">
                   <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                   <input type="hidden" name="form" value="agenda" />
-                  <input type="hidden" name="id_agenda" id="rdv_id_agenda" />
+                  <input type="hidden" name="id_agenda" id="rdv_id_agenda2" />
+                  <input type="hidden" name="id_patient" id="rdv_id_patient" />
                   
                   <!-- Modal content-->
                   <div class="modal-content">

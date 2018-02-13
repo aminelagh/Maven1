@@ -42,6 +42,10 @@ public class ServiceImpl implements Service{
       return dao.getAgendasOfPatient(id_patient);
    }
    
+   public ArrayList<Agenda> getAgendasOfUser(int id_user, String last){
+      return dao.getAgendasOfUser(id_user,last);   
+   }
+   
    //Diagnostic ----------------------
    @Override
    public boolean addDiagnostic(Diagnostic object) {
